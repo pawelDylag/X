@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0000"
     tools:context="com.hacktory.x.MainFragment">
 
     <Button
@@ -22,4 +21,47 @@
         android:layout_alignParentEnd="true"
         android:text="Send Fragment" />
 
+    <ImageView
+        android:id="@+id/imageView_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/circle_greenl" />
+
+    <ImageView
+        android:id="@+id/imageView_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView_first"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/circle_margin"
+        android:src="@drawable/circle_greenl" />
+
+    <ImageView
+        android:id="@+id/imageView_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView_second"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/circle_margin"
+        android:src="@drawable/circle_greenl" />
+
+    <ImageView
+        android:id="@+id/imageView_fourth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView_third"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/circle_margin"
+        android:src="@drawable/circle_greenl" />
+
+    <ImageView
+        android:id="@+id/imageView_fifth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView_fourth"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/circle_margin"
+        android:src="@drawable/circle_greenl" />
 </RelativeLayout>
