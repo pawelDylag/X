@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "I'm the group owner !");
                         try {
 
-                            new Thread(new Runnable() {
+                           Thread thread = new Thread(new Runnable() {
                                 @Override
                                 public void run() {
 
@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                                     try {
                                         serverSocket = new ServerSocket(PORT);
                                     } catch (IOException e) {
+                                        Log.e(TAG, "Server error: " + e.getMessage());
                                         e.printStackTrace();
                                     }
 
@@ -237,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                                             sck = serverSocket.accept();
                                         } catch (IOException e) {
                                             e.printStackTrace();
+                                            Log.e(TAG, "Server error: " + e.getMessage());
                                         }
                                         try (Scanner input = new Scanner(sck.getInputStream())) {
 
@@ -256,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
+                            thread.start();
+
                             // Do whatever tasks are specific to the group owner.
                             // One common case is creating a server thread and accepting
                             // incoming connections.
@@ -267,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                         else if (info.groupFormed) {
                         Log.d(TAG, "I'm the client !");
 
-                        new Thread(new Runnable() {
+                        Thread clientThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
@@ -285,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
+
+                        clientThread.start();
                     }
                 }
             };
