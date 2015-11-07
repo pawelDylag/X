@@ -21,6 +21,7 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
+import com.hacktory.x.interfaces.Validable;
 import com.hacktory.x.receive.ReceiveFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
@@ -32,7 +33,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Validable {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static int SELECTED_FRAGMENT = 0;
@@ -272,9 +273,8 @@ public class MainActivity extends AppCompatActivity {
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
                 BeaconHelper.INSTANCE.insertNewCheckPoint(filteredSortedList.get(0));
-                if (BeaconHelper.INSTANCE.isValidatingFinished()) {
+                if (BeaconHelper.INSTANCE.isValidatingFinished(parent, MainActivity.this)) {
                     Log.i(TAG, "sequence valid!!!");
-
                 } else {
                     Log.i(TAG, "sequence invalid!!!");
                     BeaconHelper.INSTANCE.printCurrentSequence();
@@ -289,5 +289,15 @@ public class MainActivity extends AppCompatActivity {
 //                beaconManager.startNearableDiscovery();
             }
         });
+    }
+
+    @Override
+    public void onValidationSuccess(int levelOfSecurityBroken) {
+        Log.d(TAG, "onValidationSuccess " + levelOfSecurityBroken);
+    }
+
+    @Override
+    public void onValidationFailed() {
+        Log.d(TAG, "onValidationFailed ");
     }
 }

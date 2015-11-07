@@ -53,6 +53,14 @@ public class MainFragment extends Fragment {
                 ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
             }
         });
+        buttonReceive.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                BeaconHelper.clearCurrentSequence();
+                return false;
+            }
+        });
+
     }
 
     @Override
