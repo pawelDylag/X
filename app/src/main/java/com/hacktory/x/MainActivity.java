@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setFragment(Config.FRAGMENT_MAIN);
+        setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
     }
 
