@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
                 @TargetApi(Build.VERSION_CODES.KITKAT)
                 @Override
-                public void onConnectionInfoAvailable(WifiP2pInfo info) {
+                public void onConnectionInfoAvailable(final WifiP2pInfo info) {
                     Log.d(TAG, "onConnectionInfoAvailable");
 
                     // InetAddress from WifiP2pInfo struct.
@@ -221,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "I'm the group owner !");
                         try {
 
-                            Thread serverThread = new Thread();
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -271,17 +270,20 @@ public class MainActivity extends AppCompatActivity {
                         else if (info.groupFormed) {
                         Log.d(TAG, "I'm the client !");
 
-                        try {
-                            Socket socket = new Socket(info.groupOwnerAddress, PORT);
-                            OutputStream outputStream = socket.getOutputStream();
-                            outputStream.write(Byte.valueOf("Send a message to server !"));
-                            outputStream.close();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Socket socket = new Socket(info.groupOwnerAddress, PORT);
+                                    OutputStream outputStream = socket.getOutputStream();
+                                    outputStream.write(Byte.valueOf("Send a message to server !"));
+                                    outputStream.close();
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 }
             };
