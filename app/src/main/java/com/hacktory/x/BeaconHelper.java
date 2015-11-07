@@ -22,7 +22,7 @@ public class BeaconHelper {
     /**
      * koleność trasy Beacona: Arek, Łukasz, Magda, Patryk
      */
-    private static final int[] ourMinors = new int[]{33961, 53043,/* 33768,*/ 57840};
+    private static final int[] ourMinors = new int[]{33961, 53043, 57840,3104,62776};
 
     private static Comparator<? super Beacon> mostNearbyComparator = new Comparator<Beacon>() {
         @Override
