@@ -64,6 +64,14 @@ public class BeaconHelper {
     private Beacon lastDiscoveredBeacon = null;
     private List<Integer> beaconSequence = new ArrayList<>();
 
+    public List<Integer> getBeaconSequence() {
+        return beaconSequence;
+    }
+
+    public void setBeaconSequence(List<Integer> beaconSequence) {
+        this.beaconSequence = beaconSequence;
+    }
+
     public Beacon getLastDiscoveredBeacon() {
         return lastDiscoveredBeacon;
     }

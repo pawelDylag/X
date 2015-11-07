@@ -470,16 +470,11 @@ public class MainActivity extends AppCompatActivity {
                 Beacon mostPowerful = filteredSortedList.get(0);
                 if (Utils.computeProximity(mostPowerful).compareTo(Utils.Proximity.IMMEDIATE) == 0)
                     BeaconHelper.INSTANCE.insertNewCheckPoint(mostPowerful);
-//                BeaconHelper.INSTANCE.isValidatingFinishedVOID(fragmentReference);
-//                if (BeaconHelper.INSTANCE.isValidated(fragmentReference)) {
-//                    Log.i(TAG, "sequence valid!!!");
-//                } else {
-//                    Log.i(TAG, "sequence invalid!!!");
-//                }
+
                 BeaconHelper.INSTANCE.printCurrentSequence();
                 BeaconHelper.INSTANCE.printTargetSequence();
                 if (BeaconHelper.INSTANCE.sequencesNotEqual(fragmentReference)) {
-                    if (fragmentReference != null)
+                    if (fragmentReference != null && BeaconHelper.INSTANCE.getBeaconSequence().size() > 0)
                         fragmentReference.onValidationFailed();
                 }
             }

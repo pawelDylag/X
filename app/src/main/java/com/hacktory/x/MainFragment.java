@@ -206,6 +206,7 @@ public class MainFragment extends Fragment implements Validable {
     @Override
     public void onValidationFailed() {
         Log.e(TAG, "failed validation");
+        errorTrigger();
     }
 
     private void errorTrigger(){
