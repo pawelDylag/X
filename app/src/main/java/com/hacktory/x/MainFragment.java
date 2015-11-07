@@ -49,7 +49,7 @@ public class MainFragment extends Fragment {
 
         getViews(view);
 
-//        setAllImagesToColor(Constants.COLOR_GREY);
+        setAllImagesToColor(Constants.COLOR_GREY);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -112,6 +112,39 @@ public class MainFragment extends Fragment {
         }
         
         imageView.setImageResource(image);
+    }
+
+    public void setImageColorWithLevel (int level){
+
+        int image = R.drawable.circle_greenl;
+
+        switch (level){
+            case 0:
+                imageViewFirst.setImageResource(image);
+                break;
+            case 1:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                break;
+            case 2:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                imageViewThird.setImageResource(image);
+                break;
+            case 3:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                imageViewThird.setImageResource(image);
+                imageViewFourth.setImageResource(image);
+                break;
+            case 4:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                imageViewThird.setImageResource(image);
+                imageViewFourth.setImageResource(image);
+                imageViewFifth.setImageResource(image);
+                break;
+        }
     }
 
     @Override
