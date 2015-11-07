@@ -30,7 +30,6 @@ import com.hacktory.x.receive.ReceiveFragment;
 import com.hacktory.x.send.SendFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -364,6 +363,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void connectToService() {
         Log.d(TAG, "connectToService ");
+        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+            @Override
+            public void onEnteredRegion(Region region, List<Beacon> list) {
+
+            }
+
+            @Override
+            public void onExitedRegion(Region region) {
+
+            }
+        });
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
