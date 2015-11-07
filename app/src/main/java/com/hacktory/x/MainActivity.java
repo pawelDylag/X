@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -18,6 +18,7 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
+import com.hacktory.x.receive.MessageFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
 import java.util.Collections;
@@ -52,7 +53,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void setFragment(int selectedFragment){
         Log.d(TAG, "selected fragment: " + selectedFragment);
-        
+//        Fragment fragment = null;
+        switch (selectedFragment){
+            case Constants.FRAGMENT_MAIN:
+                MainFragment fragment = new MainFragment();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_placeholder_main, fragment);
+                ft.commit();
+                break;
+            case Constants.FRAGMENT_RECEIVE:
+//              MessageFragment frasgment = new MessageFragment();
+                break;
+            case Constants.FRAGMENT_SEND:
+                break;
+            default:
+//                fragment = new MainFragment();
+                break;
+        }
+
+
     }
 
     private void setupEstimoteSDK() {
