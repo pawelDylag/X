@@ -1,14 +1,12 @@
 package com.hacktory.x;
 
+import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.app.FragmentTransaction;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,12 +16,9 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
-import com.hacktory.x.receive.MessageFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
-import java.util.Collections;
 import java.util.List;
-
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,12 +44,13 @@ public class MainActivity extends AppCompatActivity {
         initIntentFilters();
         initP2PChannel();
         initBroadcastReceiver();
+        showProgressBar(true);
     }
 
-    private void setFragment(int selectedFragment){
+    private void setFragment(int selectedFragment) {
         Log.d(TAG, "selected fragment: " + selectedFragment);
 //        Fragment fragment = null;
-        switch (selectedFragment){
+        switch (selectedFragment) {
             case Constants.FRAGMENT_MAIN:
                 MainFragment fragment = new MainFragment();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -184,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 showProgressBar(false);
-               // Collections.sort(list, Constants.getMostNearbyComparator());
+                // Collections.sort(list, Constants.getMostNearbyComparator());
                 for (Beacon beacon : list) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());

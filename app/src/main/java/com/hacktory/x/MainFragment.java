@@ -7,12 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tt.whorlviewlibrary.WhorlView;
-
 
 public class MainFragment extends Fragment {
     private MainActivity parentactivity;
-    private WhorlView progressBar;
+//    private WhorlView progressBar;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -33,7 +31,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_range, container, false);
-        progressBar = (WhorlView) view.findViewById(R.id.progressBarRanging);
+//        progressBar = (WhorlView) view.findViewById(R.id.progressBarRanging);
         return view;
     }
 
