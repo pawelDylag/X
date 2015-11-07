@@ -80,36 +80,43 @@ public class BeaconHelper {
         Log.d(TAG, "target sequence: " + sequence);
     }
 
-    public boolean isValidatingFinished(@Nullable Validable validator) {
-        Log.d(TAG, "isValidatingFinished ");
-        if (ourMinors.length != beaconSequence.size())
-            return false;
-        List<Integer> mockedMinors = new ArrayList<>();
+    private int currentAchieved = -1;
 
+    public boolean isValidated(@Nullable Validable validator) {
+        Log.d(TAG, "isValidated ");
+
+        List<Integer> mockedMinors = new ArrayList<>();
         mockedMinors.addAll(beaconSequence);
-        for (int j = 0; j < ourMinors.length; j++) {
-            int schemaMinor = mockedMinors.get(j);
-            if (ourMinors[j] == schemaMinor) {
+
+        for (int j = 0; j < mockedMinors.size(); j++) {
+            if (ourMinors[j] == mockedMinors.get(j)) {
                 String message = "validation level " + (1 + j) + " achieved";
                 Log.d(TAG, message);
-                if (validator != null)
+                if (validator == null) {
+                    Log.e(TAG, "validator is null");
+                    return false;
+                } else if (currentAchieved < j) {
+                    currentAchieved = j;
                     validator.onValidationSuccess(j);
-                else
-                    Log.e(TAG, "validator: " + validator);
-            } else {
-                if (ourMinors.length == beaconSequence.size())
-                    if (validator != null)
-                        validator.onValidationFailed();
-                    else
-                        Log.e(TAG, "validator: " + validator);
-                return false;
+                    return true;
+                } else if (mockedMinors.size() < ourMinors.length) {
+
+                    for (int k = 0; j < mockedMinors.size(); k++) {
+                        if (ourMinors[k] != mockedMinors.get(k)) {
+                            validator.onValidationFailed();
+                            return true;
+                        }
+                    }
+                    return true;
+                }
             }
         }
-        return true;
+        return false;
     }
 
     public static void clearCurrentSequence() {
         Log.d(TAG, "clearCurrentSequence ");
         INSTANCE.beaconSequence.clear();
+
     }
 }

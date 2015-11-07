@@ -200,4 +200,10 @@ public class MainFragment extends Fragment implements Validable {
     public void onValidationFailed() {
         Log.e(TAG, "failed validation");
     }
+
+    @Override
+    public void onSequenceRestart() {
+        BeaconHelper.clearCurrentSequence();
+    }
+
 }

@@ -26,6 +26,7 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
+import com.estimote.sdk.Utils;
 import com.hacktory.x.receive.ReceiveFragment;
 import com.hacktory.x.send.SendFragment;
 import com.tt.whorlviewlibrary.WhorlView;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "setupEstimoteSDK ");
         EstimoteSDK.initialize(this, "estimons-mzy", "e2c71dee0a386b6a548d0cde0754384a");
         beaconManager = new BeaconManager(this);
-        beaconManager.setForegroundScanPeriod(500, 1000);
+        beaconManager.setForegroundScanPeriod(500, 0);
     }
 
     private void initIntentFilters() {
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPeersAvailable(WifiP2pDeviceList peerList) {
                 Log.d(TAG, "Peers available: " + peerList.getDeviceList().size());
 
-                if(peerList.getDeviceList().size() > 0 ) {
+                if (peerList.getDeviceList().size() > 0) {
 
                     for (WifiP2pDevice nextDevice : peerList.getDeviceList()) {
 
@@ -178,9 +179,7 @@ public class MainActivity extends AppCompatActivity {
                             if (!isP2pConnected) {
 //                                connectToP2PWifiDevice(nextDevice);
                             }
-                        }
-
-                        else {
+                        } else {
                             isP2pConnected = false;
                         }
 
@@ -282,8 +281,7 @@ public class MainActivity extends AppCompatActivity {
                     if (networkInfo.isConnected()) {
                         Log.d(TAG, "Network info(): connected !");
                         p2pManager.requestConnectionInfo(p2pChannel, connectionInfoListener);
-                    }
-                    else {
+                    } else {
                         Log.d(TAG, "Network info(): disconnected !");
                     }
 
@@ -377,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
+
                 if (list == null || list.size() == 0)
                     return;
                 if (BeaconHelper.firstScan) {
@@ -389,10 +388,14 @@ public class MainActivity extends AppCompatActivity {
                 Collections.sort(filteredSortedList, BeaconHelper.getMostNearbyComparator());
                 for (Beacon beacon : filteredSortedList) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
-                            + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
+                            + ", minor:" + beacon.getMinor() + ", major:"
+                            + beacon.getMajor() + "," + Utils.computeProximity(beacon).name());
                 }
-                BeaconHelper.INSTANCE.insertNewCheckPoint(filteredSortedList.get(0));
-                if (BeaconHelper.INSTANCE.isValidatingFinished(fragmentReference)) {
+                Beacon mostPowerful = filteredSortedList.get(0);
+                if (Utils.computeProximity(mostPowerful).compareTo(Utils.Proximity.IMMEDIATE) == 0)
+                    BeaconHelper.INSTANCE.insertNewCheckPoint(mostPowerful);
+//                BeaconHelper.INSTANCE.isValidatingFinishedVOID(fragmentReference);
+                if (BeaconHelper.INSTANCE.isValidated(fragmentReference)) {
                     Log.i(TAG, "sequence valid!!!");
                 } else {
                     Log.i(TAG, "sequence invalid!!!");

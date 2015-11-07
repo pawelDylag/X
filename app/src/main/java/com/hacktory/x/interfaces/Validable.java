@@ -13,4 +13,7 @@ public interface Validable {
      * when validation in progress, if user goes with invalid path, this method is invoked
      */
     void onValidationFailed();
+
+    void onSequenceRestart();
+
 }
