@@ -1,15 +1,15 @@
 package com.hacktory.x;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.Region;
+import com.hacktory.x.interfaces.Validable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by lukasz on 07.11.15.
@@ -18,7 +18,11 @@ public class BeaconHelper {
     public static final BeaconHelper INSTANCE = new BeaconHelper();
     public static final String TAG = BeaconHelper.class.getSimpleName();
     public static final Region OUR_BEACONS_REGION = new Region("rid", null, 54321, null);
-    private static final int[] ourMinors = new int[]{33961, 53043, 33768, 57840};
+    public static boolean firstScan = true;
+    /**
+     * koleność trasy Beacona: Arek, Łukasz, Magda, Patryk
+     */
+    private static final int[] ourMinors = new int[]{33961, 53043,/* 33768,*/ 57840};
 
     private static Comparator<? super Beacon> mostNearbyComparator = new Comparator<Beacon>() {
         @Override
@@ -41,7 +45,7 @@ public class BeaconHelper {
     }
 
     private Beacon lastDiscoveredBeacon = null;
-    private Set<Integer> beaconSequence = new HashSet<>();
+    private List<Integer> beaconSequence = new ArrayList<>();
 
     public Beacon getLastDiscoveredBeacon() {
         return lastDiscoveredBeacon;
@@ -52,32 +56,60 @@ public class BeaconHelper {
     }
 
     public void insertNewCheckPoint(Beacon beacon) {
+        Log.d(TAG, "insertNewCheckPoint ");
+        if (beaconSequence.size() > 0)
+            for (Integer integer : beaconSequence)
+                if (integer == beacon.getMinor())
+                    return;
         beaconSequence.add(beacon.getMinor());
     }
 
     public void printCurrentSequence() {
+        String sequence = "";
         for (Integer integer : beaconSequence) {
-            Log.d(TAG, "current sequence: " + integer);
+            sequence += integer + ",";
         }
+        Log.d(TAG, "current sequence: " + sequence);
     }
 
-    public boolean isValidatingFinished() {
+    public void printTargetSequence() {
+        String sequence = "";
+        for (Integer integer : ourMinors) {
+            sequence += integer + ",";
+        }
+        Log.d(TAG, "target sequence: " + sequence);
+    }
+
+    public boolean isValidatingFinished(@Nullable Validable validator) {
         Log.d(TAG, "isValidatingFinished ");
         if (ourMinors.length != beaconSequence.size())
             return false;
         List<Integer> mockedMinors = new ArrayList<>();
 
         mockedMinors.addAll(beaconSequence);
-
-        mockedMinors.addAll(beaconSequence);
         for (int j = 0; j < ourMinors.length; j++) {
             int schemaMinor = mockedMinors.get(j);
             if (ourMinors[j] == schemaMinor) {
-                Log.d(TAG, "validation level " + (1 + j) + " achievved");
+                String message = "validation level " + (1 + j) + " achieved";
+                Log.d(TAG, message);
+                if (validator != null)
+                    validator.onValidationSuccess(j);
+                else
+                    Log.e(TAG, "validator: " + validator);
             } else {
+                if (ourMinors.length == beaconSequence.size())
+                    if (validator != null)
+                        validator.onValidationFailed();
+                    else
+                        Log.e(TAG, "validator: " + validator);
                 return false;
             }
         }
         return true;
+    }
+
+    public static void clearCurrentSequence() {
+        Log.d(TAG, "clearCurrentSequence ");
+        INSTANCE.beaconSequence.clear();
     }
 }

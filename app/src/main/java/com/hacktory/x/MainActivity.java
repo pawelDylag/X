@@ -16,9 +16,13 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -51,8 +55,12 @@ public class MainActivity extends AppCompatActivity {
     private BeaconManager beaconManager;
     private List<Beacon> filteredSortedList = new ArrayList<>();
 
+    private static MainFragment fragmentReference = null;
+
     @Bind(R.id.progressBarRanging)
     public WhorlView progressBar;
+    @Bind(R.id.parent)
+    public RelativeLayout parent;
 
     private IntentFilter intentFilter = new IntentFilter();
     private BroadcastReceiver broadcastReceiver;
@@ -81,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         initBroadcastReceiver();
         initPeerListener();
         initConnectionInfoListener();
-        showProgressBar(true);
+        showProgressBar(true, "Setup beacon ranging...");
     }
 
 
@@ -92,11 +100,13 @@ public class MainActivity extends AppCompatActivity {
             case Constants.FRAGMENT_MAIN:
                 SELECTED_FRAGMENT = Constants.FRAGMENT_MAIN;
                 MainFragment fragment = MainFragment.newInstance();
+                fragmentReference = fragment;
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_placeholder_main, fragment);
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
+                fragmentReference = null;
                 SELECTED_FRAGMENT = Constants.FRAGMENT_RECEIVE;
                 ReceiveFragment fragmentR = ReceiveFragment.newInstance();
                 FragmentTransaction ftR = getFragmentManager().beginTransaction();
@@ -104,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 ftR.commit();
                 break;
             case Constants.FRAGMENT_SEND:
+                fragmentReference = null;
                 SELECTED_FRAGMENT = Constants.FRAGMENT_SEND;
                 SendFragment fragmentS = SendFragment.newInstance();
                 FragmentTransaction ftS = getFragmentManager().beginTransaction();
@@ -111,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 ftS.commit();
                 break;
             default:
+                fragmentReference = null;
 //                fragment = new MainFragment();
                 break;
         }
@@ -383,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (SELECTED_FRAGMENT!=Constants.FRAGMENT_MAIN){
+        if (SELECTED_FRAGMENT != Constants.FRAGMENT_MAIN) {
             setFragment(Constants.FRAGMENT_MAIN);
         } else {
             super.onBackPressed();
@@ -392,21 +404,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showProgressBar(final boolean show) {
+        showProgressBar(show, null);
+    }
+
+    public void showProgressBar(final boolean show, @Nullable String message) {
         Log.d(TAG, "showProgressBar " + show);
         if (progressBar == null)
             return;
-        int vis = show ? View.VISIBLE : View.GONE;
-        if (show) progressBar.start();
-        else progressBar.stop();
-        progressBar.setVisibility(vis);
+        if (show) {
+            progressBar.start();
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.stop();
+            progressBar.setVisibility(View.GONE);
+        }
+        if (message != null)
+            Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
+
+        parent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return show;
+            }
+        });
     }
 
     private void connectToService() {
         Log.d(TAG, "connectToService ");
+        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+            @Override
+            public void onEnteredRegion(Region region, List<Beacon> list) {
+
+            }
+
+            @Override
+            public void onExitedRegion(Region region) {
+
+            }
+        });
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
-                showProgressBar(false);
+                if (list == null || list.size() == 0)
+                    return;
+                if (BeaconHelper.firstScan) {
+                    BeaconHelper.firstScan = false;
+                    showProgressBar(false, "Beacon scan started!");
+                }
+
                 filteredSortedList.clear();
                 filteredSortedList.addAll(list);
                 Collections.sort(filteredSortedList, BeaconHelper.getMostNearbyComparator());
@@ -414,10 +459,13 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
-                if (BeaconHelper.INSTANCE.isValidatingFinished()) {
+                BeaconHelper.INSTANCE.insertNewCheckPoint(filteredSortedList.get(0));
+                if (BeaconHelper.INSTANCE.isValidatingFinished(fragmentReference)) {
                     Log.i(TAG, "sequence valid!!!");
                 } else {
                     Log.i(TAG, "sequence invalid!!!");
+                    BeaconHelper.INSTANCE.printCurrentSequence();
+                    BeaconHelper.INSTANCE.printTargetSequence();
                 }
             }
         });
