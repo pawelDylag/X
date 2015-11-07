@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
@@ -51,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
         initBroadcastReceiver();
     }
 
-    private void setFragment(int selectedFragment){
+
+
+    public void setFragment(int selectedFragment){
         Log.d(TAG, "selected fragment: " + selectedFragment);
 //        Fragment fragment = null;
         switch (selectedFragment){
@@ -62,7 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
-//              MessageFragment frasgment = new MessageFragment();
+                MessageFragment fragmentM = new MessageFragment();
+                FragmentTransaction ftM = getFragmentManager().beginTransaction();
+                ftM.replace(R.id.fragment_placeholder_main, fragmentM);
+                ftM.commit();
                 break;
             case Constants.FRAGMENT_SEND:
                 break;
@@ -70,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
 //                fragment = new MainFragment();
                 break;
         }
-
 
     }
 
