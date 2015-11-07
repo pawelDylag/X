@@ -8,12 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 public class MainFragment extends Fragment {
     private MainActivity parentactivity;
 //    private WhorlView progressBar;
 
-    private Button buttonReceive;
+    @Bind(R.id.button_receive)
+    public Button buttonReceive;
+
+    @Bind(R.id.button_send)
+    public Button buttonSend;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -34,31 +42,19 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_main, container, false);
-
-        getViews(view);
-        setListeners();
+        ButterKnife.bind(this, view);
         return view;
     }
 
-    private void getViews(View view){
 
-        buttonReceive = (Button) view.findViewById(R.id.button_receive);
+    @OnClick(R.id.button_receive)
+    public void switchToReceive() {
+        ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
     }
 
-    private void setListeners(){
-
-        buttonReceive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
-            }
-        });
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        parentactivity = (MainActivity) activity;
+    @OnClick(R.id.button_send)
+    public void switchToSend() {
+        ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_SEND);
     }
 
     @Override
