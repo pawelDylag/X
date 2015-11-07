@@ -19,7 +19,6 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
-import com.hacktory.x.receive.MessageFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
 import java.util.Collections;
@@ -89,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void initIntentFilters() {
         Log.d(TAG, "initIntentFilters() called with: " + "");
+        
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
     }
 
     @Override
@@ -96,10 +100,6 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.disconnect();
         super.onDestroy();
         Log.d(TAG, "onDestroy ");
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
     }
 
     private void initP2PChannel() {
