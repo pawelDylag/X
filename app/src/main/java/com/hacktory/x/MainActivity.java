@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         initIntentFilters();
         initP2PChannel();
         initBroadcastReceiver();
-        showProgressBar(true, "Setup beacon ranging...", "Ranging activated!");
+        showProgressBar(true, "Setup beacon ranging...");
     }
 
 
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (SELECTED_FRAGMENT!=Constants.FRAGMENT_MAIN){
+        if (SELECTED_FRAGMENT != Constants.FRAGMENT_MAIN) {
             setFragment(Constants.FRAGMENT_MAIN);
         } else {
             super.onBackPressed();
@@ -227,24 +227,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showProgressBar(final boolean show) {
-        showProgressBar(show, null, null);
+        showProgressBar(show, null);
     }
 
-    public void showProgressBar(final boolean show, @Nullable String showMessage, @Nullable String hideMessage) {
+    public void showProgressBar(final boolean show, @Nullable String message) {
         Log.d(TAG, "showProgressBar " + show);
         if (progressBar == null)
             return;
         if (show) {
             progressBar.start();
             progressBar.setVisibility(View.VISIBLE);
-            if (showMessage != null)
-                Snackbar.make(parent, showMessage, Snackbar.LENGTH_SHORT).show();
         } else {
             progressBar.stop();
             progressBar.setVisibility(View.GONE);
-            if (hideMessage != null)
-                Snackbar.make(parent, hideMessage, Snackbar.LENGTH_SHORT).show();
         }
+        if (message != null)
+            Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
+
         parent.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -258,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
-                showProgressBar(false);
+                showProgressBar(false, "Beacon scan started!");
                 filteredSortedList.clear();
                 filteredSortedList.addAll(list);
                 Collections.sort(filteredSortedList, BeaconHelper.getMostNearbyComparator());
