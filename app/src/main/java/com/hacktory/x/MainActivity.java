@@ -19,6 +19,7 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
+import com.hacktory.x.receive.ReceiveFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
 import java.util.Collections;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
-                MessageFragment fragmentM = new MessageFragment();
+                ReceiveFragment fragmentM = new ReceiveFragment();
                 FragmentTransaction ftM = getFragmentManager().beginTransaction();
                 ftM.replace(R.id.fragment_placeholder_main, fragmentM);
                 ftM.commit();
