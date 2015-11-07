@@ -257,7 +257,13 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
-                showProgressBar(false, "Beacon scan started!");
+                if (list == null || list.size() == 0)
+                    return;
+                if (BeaconHelper.firstScan) {
+                    BeaconHelper.firstScan = false;
+                    showProgressBar(false, "Beacon scan started!");
+                }
+
                 filteredSortedList.clear();
                 filteredSortedList.addAll(list);
                 Collections.sort(filteredSortedList, BeaconHelper.getMostNearbyComparator());
@@ -265,10 +271,14 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
+                BeaconHelper.INSTANCE.insertNewCheckPoint(filteredSortedList.get(0));
                 if (BeaconHelper.INSTANCE.isValidatingFinished()) {
                     Log.i(TAG, "sequence valid!!!");
+
                 } else {
                     Log.i(TAG, "sequence invalid!!!");
+                    BeaconHelper.INSTANCE.printCurrentSequence();
+                    BeaconHelper.INSTANCE.printTargetSequence();
                 }
             }
         });

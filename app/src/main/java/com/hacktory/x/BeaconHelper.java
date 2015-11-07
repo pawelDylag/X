@@ -18,6 +18,7 @@ public class BeaconHelper {
     public static final BeaconHelper INSTANCE = new BeaconHelper();
     public static final String TAG = BeaconHelper.class.getSimpleName();
     public static final Region OUR_BEACONS_REGION = new Region("rid", null, 54321, null);
+    public static boolean firstScan = true;
     private static final int[] ourMinors = new int[]{33961, 53043, 33768, 57840};
 
     private static Comparator<? super Beacon> mostNearbyComparator = new Comparator<Beacon>() {
@@ -56,9 +57,19 @@ public class BeaconHelper {
     }
 
     public void printCurrentSequence() {
+        String sequence = "";
         for (Integer integer : beaconSequence) {
-            Log.d(TAG, "current sequence: " + integer);
+            sequence += integer + ",";
         }
+        Log.d(TAG, "current sequence: " + sequence);
+    }
+
+    public void printTargetSequence() {
+        String sequence = "";
+        for (Integer integer : ourMinors) {
+            sequence += integer + ",";
+        }
+        Log.d(TAG, "target sequence: " + sequence);
     }
 
     public boolean isValidatingFinished() {
