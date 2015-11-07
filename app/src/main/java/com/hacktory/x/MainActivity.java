@@ -14,11 +14,12 @@ import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
 import com.tt.whorlviewlibrary.WhorlView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    private List<Beacon> modifableList = new ArrayList<>();
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ENABLE_BT = 1234;
     private BeaconManager beaconManager;
@@ -84,9 +85,12 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
+                Log.d(TAG, "onBeaconsDiscovered ");
                 showProgressBar(false);
-                Collections.sort(list, Constants.getMostNearbyComparator());
-                for (Beacon beacon : list) {
+                modifableList.clear();
+                modifableList.addAll(list);
+                Collections.sort(modifableList, Constants.getMostNearbyComparator());
+                for (Beacon beacon : modifableList) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
