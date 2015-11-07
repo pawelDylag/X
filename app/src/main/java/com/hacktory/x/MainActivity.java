@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
@@ -59,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    public void setFragment(int selectedFragment){
+    public void setFragment(int selectedFragment) {
         Log.d(TAG, "selected fragment: " + selectedFragment);
 //        Fragment fragment = null;
         switch (selectedFragment) {
@@ -89,12 +87,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "setupEstimoteSDK ");
         EstimoteSDK.initialize(this, "estimons-mzy", "e2c71dee0a386b6a548d0cde0754384a");
         beaconManager = new BeaconManager(this);
-        beaconManager.setForegroundScanPeriod(300, 0);
+        beaconManager.setForegroundScanPeriod(500, 1000);
     }
 
     private void initIntentFilters() {
         Log.d(TAG, "initIntentFilters() called with: " + "");
-        
+
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
@@ -198,17 +196,22 @@ public class MainActivity extends AppCompatActivity {
                 showProgressBar(false);
                 filteredSortedList.clear();
                 filteredSortedList.addAll(list);
-                Collections.sort(filteredSortedList, Constants.getMostNearbyComparator());
+                Collections.sort(filteredSortedList, BeaconHelper.getMostNearbyComparator());
                 for (Beacon beacon : filteredSortedList) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
+                }
+                if (BeaconHelper.INSTANCE.isValidatingFinished()) {
+                    Log.i(TAG, "sequence valid!!!");
+                } else {
+                    Log.i(TAG, "sequence invalid!!!");
                 }
             }
         });
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconManager.startRanging(Constants.OUR_BEACONS_REGION);
+                beaconManager.startRanging(BeaconHelper.OUR_BEACONS_REGION);
 //                beaconManager.startNearableDiscovery();
             }
         });
