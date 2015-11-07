@@ -23,6 +23,7 @@ import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
 import com.hacktory.x.receive.ReceiveFragment;
+import com.hacktory.x.send.SendFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
 import java.net.InetAddress;
@@ -37,6 +38,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    private static int SELECTED_FRAGMENT = 0;
     private static final int REQUEST_ENABLE_BT = 1234;
     private BeaconManager beaconManager;
     private List<Beacon> filteredSortedList = new ArrayList<>();
@@ -62,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
@@ -74,24 +75,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    public void setFragment(int selectedFragment){
+    public void setFragment(int selectedFragment) {
         Log.d(TAG, "selected fragment: " + selectedFragment);
 //        Fragment fragment = null;
         switch (selectedFragment) {
             case Constants.FRAGMENT_MAIN:
-                MainFragment fragment = new MainFragment();
+                SELECTED_FRAGMENT = Constants.FRAGMENT_MAIN;
+                MainFragment fragment = MainFragment.newInstance();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_placeholder_main, fragment);
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
-                ReceiveFragment fragmentM = new ReceiveFragment();
-                FragmentTransaction ftM = getFragmentManager().beginTransaction();
-                ftM.replace(R.id.fragment_placeholder_main, fragmentM);
-                ftM.commit();
+                SELECTED_FRAGMENT = Constants.FRAGMENT_RECEIVE;
+                ReceiveFragment fragmentR = ReceiveFragment.newInstance();
+                FragmentTransaction ftR = getFragmentManager().beginTransaction();
+                ftR.replace(R.id.fragment_placeholder_main, fragmentR);
+                ftR.commit();
                 break;
             case Constants.FRAGMENT_SEND:
+                SELECTED_FRAGMENT = Constants.FRAGMENT_SEND;
+                SendFragment fragmentS = SendFragment.newInstance();
+                FragmentTransaction ftS = getFragmentManager().beginTransaction();
+                ftS.replace(R.id.fragment_placeholder_main, fragmentS);
+                ftS.commit();
                 break;
             default:
 //                fragment = new MainFragment();
@@ -104,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "setupEstimoteSDK ");
         EstimoteSDK.initialize(this, "estimons-mzy", "e2c71dee0a386b6a548d0cde0754384a");
         beaconManager = new BeaconManager(this);
-        beaconManager.setForegroundScanPeriod(300, 0);
+        beaconManager.setForegroundScanPeriod(500, 1000);
     }
 
     private void initIntentFilters() {
@@ -305,6 +312,17 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
+    @Override
+    public void onBackPressed() {
+
+        if (SELECTED_FRAGMENT!=Constants.FRAGMENT_MAIN){
+            setFragment(Constants.FRAGMENT_MAIN);
+        } else {
+            super.onBackPressed();
+        }
+
+    }
+
     public void showProgressBar(final boolean show) {
         Log.d(TAG, "showProgressBar " + show);
         if (progressBar == null)
@@ -323,17 +341,22 @@ public class MainActivity extends AppCompatActivity {
                 showProgressBar(false);
                 filteredSortedList.clear();
                 filteredSortedList.addAll(list);
-                Collections.sort(filteredSortedList, Constants.getMostNearbyComparator());
+                Collections.sort(filteredSortedList, BeaconHelper.getMostNearbyComparator());
                 for (Beacon beacon : filteredSortedList) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
+                }
+                if (BeaconHelper.INSTANCE.isValidatingFinished()) {
+                    Log.i(TAG, "sequence valid!!!");
+                } else {
+                    Log.i(TAG, "sequence invalid!!!");
                 }
             }
         });
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconManager.startRanging(Constants.OUR_BEACONS_REGION);
+                beaconManager.startRanging(BeaconHelper.OUR_BEACONS_REGION);
 //                beaconManager.startNearableDiscovery();
             }
         });

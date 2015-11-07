@@ -14,10 +14,12 @@ public class Message {
 
     private String message;
     private long timestamp;
+    private boolean isEnemyDetected;
 
-    public Message(String message, long timestamp) {
+    public Message(String message, long timestamp, boolean isEnemyDetected) {
         this.message = message;
         this.timestamp = timestamp;
+        this.isEnemyDetected = isEnemyDetected;
     }
 
     public String getMessage() {
@@ -35,6 +37,9 @@ public class Message {
         return formater.format(date);
     }
 
+    public boolean isEnemyDetected() {
+        return isEnemyDetected;
+    }
 
     public void setMessage(String message) {
         this.message = message;

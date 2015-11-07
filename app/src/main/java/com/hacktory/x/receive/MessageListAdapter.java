@@ -1,5 +1,7 @@
 package com.hacktory.x.receive;
 
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +21,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     ArrayList<Message> messages;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public TextView textView;
+        public TextView textView, timeView;
+        public CardView cardView;
         public ViewHolder(View v) {
             super(v);
             textView = (TextView) v.findViewById(R.id.message_card_text);
+            timeView = (TextView) v.findViewById(R.id.message_card_time);
+            cardView = (CardView) v.findViewById(R.id.message_card);
         }
     }
 
@@ -41,11 +45,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.textView.setText(messages.get(position).getMessage());
+        Message message = messages.get(position);
+        if (message.isEnemyDetected()) holder.cardView.setCardBackgroundColor(Color.RED);
+        holder.textView.setText(message.getMessage());
+        holder.timeView.setText(message.getReadableTimestamp());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return messages.size();
+    }
+
+    public void addNewMessage(Message m) {
+        this.messages.add(m);
+        notifyDataSetChanged();
     }
 }
