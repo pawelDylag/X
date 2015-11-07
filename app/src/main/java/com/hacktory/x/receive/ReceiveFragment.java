@@ -3,15 +3,13 @@ package com.hacktory.x.receive;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ListAdapter;
 
-import com.hacktory.x.Message;
+
+import com.hacktory.x.data.Message;
 import com.hacktory.x.R;
 
 import java.util.ArrayList;
