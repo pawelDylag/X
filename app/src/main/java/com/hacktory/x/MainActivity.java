@@ -35,8 +35,6 @@ import com.tt.whorlviewlibrary.WhorlView;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "setupEstimoteSDK ");
         EstimoteSDK.initialize(this, "estimons-mzy", "e2c71dee0a386b6a548d0cde0754384a");
         beaconManager = new BeaconManager(this);
-        beaconManager.setForegroundScanPeriod(500, 0);
+        beaconManager.setForegroundScanPeriod(300, 0);
     }
 
     private void initIntentFilters() {
@@ -473,8 +471,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "sequence valid!!!");
                 } else {
                     Log.i(TAG, "sequence invalid!!!");
-                    BeaconHelper.INSTANCE.printCurrentSequence();
-                    BeaconHelper.INSTANCE.printTargetSequence();
+                }
+                BeaconHelper.INSTANCE.printCurrentSequence();
+                BeaconHelper.INSTANCE.printTargetSequence();
+                if (BeaconHelper.INSTANCE.sequencesNotEqual()) {
+                    fragmentReference.onValidationFailed();
                 }
             }
         });

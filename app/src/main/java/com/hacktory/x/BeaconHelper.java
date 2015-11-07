@@ -22,7 +22,7 @@ public class BeaconHelper {
     /**
      * koleność trasy Beacona: Arek, Łukasz, Magda, Patryk
      */
-    private static final int[] ourMinors = new int[]{33961, 53043, 57840,3104,62776};
+    private static final int[] ourMinors = new int[]{33961, 53043, 57840, 3104, 62776};
 
     private static Comparator<? super Beacon> mostNearbyComparator = new Comparator<Beacon>() {
         @Override
@@ -101,7 +101,7 @@ public class BeaconHelper {
                     return true;
                 } else if (mockedMinors.size() < ourMinors.length) {
 
-                    for (int k = 0; j < mockedMinors.size(); k++) {
+                    for (int k = 0; k < mockedMinors.size(); k++) {
                         if (ourMinors[k] != mockedMinors.get(k)) {
                             validator.onValidationFailed();
                             return true;
@@ -118,5 +118,15 @@ public class BeaconHelper {
         Log.d(TAG, "clearCurrentSequence ");
         INSTANCE.beaconSequence.clear();
 
+    }
+
+    public boolean sequencesNotEqual() {
+        int size = beaconSequence.size();
+        if (size > 0) {
+            for (int j = 0; j < size; j++)
+                if (ourMinors[j] != beaconSequence.get(j))
+                    return false;
+        }
+        return true;
     }
 }
