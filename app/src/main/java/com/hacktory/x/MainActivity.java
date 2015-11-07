@@ -35,6 +35,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    private static int SELECTED_FRAGMENT = 0;
     private static final int REQUEST_ENABLE_BT = 1234;
     private BeaconManager beaconManager;
     private List<Beacon> filteredSortedList = new ArrayList<>();
@@ -72,18 +73,21 @@ public class MainActivity extends AppCompatActivity {
 //        Fragment fragment = null;
         switch (selectedFragment) {
             case Constants.FRAGMENT_MAIN:
-                MainFragment fragment = new MainFragment();
+                SELECTED_FRAGMENT = Constants.FRAGMENT_MAIN;
+                MainFragment fragment = MainFragment.newInstance();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_placeholder_main, fragment);
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
-                ReceiveFragment fragmentM = new ReceiveFragment();
-                FragmentTransaction ftM = getFragmentManager().beginTransaction();
-                ftM.replace(R.id.fragment_placeholder_main, fragmentM);
-                ftM.commit();
+                SELECTED_FRAGMENT = Constants.FRAGMENT_RECEIVE;
+                ReceiveFragment fragmentR = ReceiveFragment.newInstance();
+                FragmentTransaction ftR = getFragmentManager().beginTransaction();
+                ftR.replace(R.id.fragment_placeholder_main, fragmentR);
+                ftR.commit();
                 break;
             case Constants.FRAGMENT_SEND:
+                SELECTED_FRAGMENT = Constants.FRAGMENT_SEND;
                 break;
             default:
 //                fragment = new MainFragment();
@@ -209,6 +213,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (SELECTED_FRAGMENT!=Constants.FRAGMENT_MAIN){
+            setFragment(Constants.FRAGMENT_MAIN);
+        } else {
+            super.onBackPressed();
+        }
+
     }
 
     public void showProgressBar(final boolean show) {
