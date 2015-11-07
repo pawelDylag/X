@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -34,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
         setupEstimoteSDK();
     }
 
-    private void setFragment(int selectedFragment){
+    private void setFragment(int selectedFragment) {
         Log.d(TAG, "selected fragment: " + selectedFragment);
-        
+
     }
 
     private void setupEstimoteSDK() {
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconManager.startRanging(Constants.ALL_ESTIMOTE_BEACONS_REGION);
+                beaconManager.startRanging(Constants.SCHEMA_REGION);
 //                beaconManager.startNearableDiscovery();
             }
         });
