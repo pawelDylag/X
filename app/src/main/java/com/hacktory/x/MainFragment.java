@@ -9,12 +9,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.hacktory.x.interfaces.Validable;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements Validable {
     private MainActivity parentactivity;
 //    private WhorlView progressBar;
 
@@ -26,6 +29,10 @@ public class MainFragment extends Fragment {
 
     @Bind(R.id.button_send)
     public Button buttonSend;
+    /**
+     * current level of security, to display proper image
+     */
+    private int currentLevelOfSecurityBroken = -1;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -33,7 +40,6 @@ public class MainFragment extends Fragment {
     }
 
     public MainFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -55,7 +61,7 @@ public class MainFragment extends Fragment {
     }
 
     private void getViews(View view) {
-        
+
         imageViewFirst = (ImageView) view.findViewById(R.id.imageView_first);
         imageViewSecond = (ImageView) view.findViewById(R.id.imageView_second);
         imageViewThird = (ImageView) view.findViewById(R.id.imageView_third);
@@ -69,14 +75,24 @@ public class MainFragment extends Fragment {
         ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
     }
 
+    @OnLongClick(R.id.button_receive)
+    public void clearListOfValidatedBeacons1() {
+        BeaconHelper.clearCurrentSequence();
+    }
+
+    @OnLongClick(R.id.button_send)
+    public void clearListOfValidatedBeacons2() {
+        BeaconHelper.clearCurrentSequence();
+    }
+
     @OnClick(R.id.button_send)
     public void switchToSend() {
         ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_SEND);
     }
 
-    public void setAllImagesToColor(int color){
+    public void setAllImagesToColor(int color) {
         int image = 0;
-        switch (color){
+        switch (color) {
             case Constants.COLOR_GREY:
                 image = R.drawable.circle_grey;
                 break;
@@ -96,10 +112,10 @@ public class MainFragment extends Fragment {
 
     }
 
-    public void setImageColor (int color, ImageView imageView){
+    public void setImageColor(int color, ImageView imageView) {
 
         int image = 0;
-        switch (color){
+        switch (color) {
             case Constants.COLOR_GREY:
                 image = R.drawable.circle_grey;
                 break;
@@ -110,7 +126,7 @@ public class MainFragment extends Fragment {
                 image = R.drawable.circle_greend;
                 break;
         }
-        
+
         imageView.setImageResource(image);
     }
 
@@ -123,6 +139,18 @@ public class MainFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
+    }
+
+    @Override
+    public void onValidationSuccess(int levelOfSecurityBroken) {
+        if (currentLevelOfSecurityBroken < levelOfSecurityBroken) {
+            currentLevelOfSecurityBroken = levelOfSecurityBroken;
+        }
+    }
+
+    @Override
+    public void onValidationFailed() {
 
     }
 }

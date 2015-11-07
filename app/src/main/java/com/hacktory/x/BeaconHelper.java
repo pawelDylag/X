@@ -1,8 +1,7 @@
 package com.hacktory.x;
 
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.Region;
@@ -81,7 +80,7 @@ public class BeaconHelper {
         Log.d(TAG, "target sequence: " + sequence);
     }
 
-    public boolean isValidatingFinished(@NonNull View view, @NonNull Validable validator) {
+    public boolean isValidatingFinished(@Nullable Validable validator) {
         Log.d(TAG, "isValidatingFinished ");
         if (ourMinors.length != beaconSequence.size())
             return false;
@@ -93,11 +92,12 @@ public class BeaconHelper {
             if (ourMinors[j] == schemaMinor) {
                 String message = "validation level " + (1 + j) + " achieved";
                 Log.d(TAG, message);
-//                Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
-                validator.onValidationSuccess(j);
+                if (validator != null)
+                    validator.onValidationSuccess(j);
             } else {
                 if (ourMinors.length == beaconSequence.size())
-                    validator.onValidationFailed();
+                    if (validator != null)
+                        validator.onValidationFailed();
                 return false;
             }
         }

@@ -21,7 +21,6 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
-import com.hacktory.x.interfaces.Validable;
 import com.hacktory.x.receive.ReceiveFragment;
 import com.hacktory.x.send.SendFragment;
 import com.tt.whorlviewlibrary.WhorlView;
@@ -34,13 +33,15 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity implements Validable {
+public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static int SELECTED_FRAGMENT = 0;
     private static final int REQUEST_ENABLE_BT = 1234;
     private BeaconManager beaconManager;
     private List<Beacon> filteredSortedList = new ArrayList<>();
+
+    private static MainFragment fragmentReference = null;
 
     @Bind(R.id.progressBarRanging)
     public WhorlView progressBar;
@@ -77,11 +78,13 @@ public class MainActivity extends AppCompatActivity implements Validable {
             case Constants.FRAGMENT_MAIN:
                 SELECTED_FRAGMENT = Constants.FRAGMENT_MAIN;
                 MainFragment fragment = MainFragment.newInstance();
+                fragmentReference = fragment;
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_placeholder_main, fragment);
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
+                fragmentReference = null;
                 SELECTED_FRAGMENT = Constants.FRAGMENT_RECEIVE;
                 ReceiveFragment fragmentR = ReceiveFragment.newInstance();
                 FragmentTransaction ftR = getFragmentManager().beginTransaction();
@@ -89,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements Validable {
                 ftR.commit();
                 break;
             case Constants.FRAGMENT_SEND:
+                fragmentReference = null;
                 SELECTED_FRAGMENT = Constants.FRAGMENT_SEND;
                 SendFragment fragmentS = SendFragment.newInstance();
                 FragmentTransaction ftS = getFragmentManager().beginTransaction();
@@ -96,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements Validable {
                 ftS.commit();
                 break;
             default:
+                fragmentReference = null;
 //                fragment = new MainFragment();
                 break;
         }
@@ -278,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements Validable {
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
                 BeaconHelper.INSTANCE.insertNewCheckPoint(filteredSortedList.get(0));
-                if (BeaconHelper.INSTANCE.isValidatingFinished(parent, MainActivity.this)) {
+                if (BeaconHelper.INSTANCE.isValidatingFinished(fragmentReference)) {
                     Log.i(TAG, "sequence valid!!!");
                 } else {
                     Log.i(TAG, "sequence invalid!!!");
@@ -294,15 +299,5 @@ public class MainActivity extends AppCompatActivity implements Validable {
 //                beaconManager.startNearableDiscovery();
             }
         });
-    }
-
-    @Override
-    public void onValidationSuccess(int levelOfSecurityBroken) {
-        Log.d(TAG, "onValidationSuccess " + levelOfSecurityBroken);
-    }
-
-    @Override
-    public void onValidationFailed() {
-        Log.d(TAG, "onValidationFailed ");
     }
 }
