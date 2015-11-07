@@ -6,13 +6,22 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.hacktory.x.R;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
 public class SendFragment extends Fragment {
+
+    @Bind(R.id.fragment_send_input)
+    EditText editText;
+
+    @Bind(R.id.fragment_send_button)
+    Button sendButton;
 
     public static SendFragment newInstance() {
         SendFragment fragment = new SendFragment();
