@@ -1,5 +1,6 @@
 package com.hacktory.x;
 
+import android.annotation.TargetApi;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -13,6 +14,7 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -31,9 +33,16 @@ import com.hacktory.x.receive.ReceiveFragment;
 import com.hacktory.x.send.SendFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String GALAXY_NAME = "Galaxy S5";
     private boolean isP2pConnected = false;
 
+    private static final int PORT = 1030;
+
     WifiP2pManager.Channel p2pChannel;
     WifiP2pManager p2pManager;
     WifiP2pManager.ConnectionInfoListener connectionInfoListener;
@@ -79,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         initBroadcastReceiver();
         initPeerListener();
         initConnectionInfoListener();
-        showProgressBar(true);
         showProgressBar(true, "Setup beacon ranging...");
     }
 
@@ -177,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (nextDevice.deviceName.equals(GALAXY_NAME)) {
                             if (!isP2pConnected) {
-//                                connectToP2PWifiDevice(nextDevice);
+                                connectToP2PWifiDevice(nextDevice);
                             }
                         } else {
                             isP2pConnected = false;
@@ -195,28 +205,92 @@ public class MainActivity extends AppCompatActivity {
     private void initConnectionInfoListener() {
         Log.d(TAG, "initConnectionInfoListener() called with: " + "");
 
-        connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
-            @Override
-            public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                Log.d(TAG, "onConnectionInfoAvailable");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+                @TargetApi(Build.VERSION_CODES.KITKAT)
+                @Override
+                public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+                    Log.d(TAG, "onConnectionInfoAvailable");
 
-                // InetAddress from WifiP2pInfo struct.
-                String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
+                    // InetAddress from WifiP2pInfo struct.
+                    String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
 
-                // After the group negotiation, we can determine the group owner.
-                if (info.groupFormed && info.isGroupOwner) {
-                    Log.d(TAG, "I'm the group owner !");
-                    // Do whatever tasks are specific to the group owner.
-                    // One common case is creating a server thread and accepting
-                    // incoming connections.
-                } else if (info.groupFormed) {
-                    Log.d(TAG, "I'm the client !");
-                    // The other device acts as the client. In this case,
-                    // you'll want to create a client thread that connects to the group
-                    // owner.
+                    // After the group negotiation, we can determine the group owner.
+                    if (info.groupFormed && info.isGroupOwner) {
+                        Log.d(TAG, "I'm the group owner !");
+                        try {
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    ServerSocket serverSocket = null;
+                                    try {
+                                        serverSocket = new ServerSocket(PORT);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    Socket sck = null;
+
+                                    while (true) {
+
+                                        try {
+                                            sck = serverSocket.accept();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        try (Scanner input = new Scanner(sck.getInputStream())) {
+
+                                            while (input.hasNextLine()) {
+                                                Log.d((TAG), "Server input: " + input.nextLine());
+                                            }
+
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        try {
+                                            serverSocket.close();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            });
+
+                            // Do whatever tasks are specific to the group owner.
+                            // One common case is creating a server thread and accepting
+                            // incoming connections.
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                        else if (info.groupFormed) {
+                        Log.d(TAG, "I'm the client !");
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Log.d(TAG, "I'm sending !");
+                                    Thread.sleep(3000);
+                                    Socket socket = new Socket(info.groupOwnerAddress, PORT);
+                                    OutputStream outputStream = socket.getOutputStream();
+                                    outputStream.write(Byte.valueOf("Send a message to server !"));
+                                    outputStream.close();
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        };
+            };
+        }
     }
 
     private void connectToP2PWifiDevice(final WifiP2pDevice device) {

@@ -2,6 +2,7 @@ package com.hacktory.x;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -108,6 +109,9 @@ public class MainFragment extends Fragment implements Validable {
             case Constants.COLOR_DARK_GREEN:
                 image = R.drawable.circle_greend;
                 break;
+            case Constants.COLOR_RED:
+                image = R.drawable.circle_red;
+                break;
         }
 
         imageViewFirst.setImageResource(image);
@@ -130,6 +134,9 @@ public class MainFragment extends Fragment implements Validable {
                 break;
             case Constants.COLOR_DARK_GREEN:
                 image = R.drawable.circle_greend;
+                break;
+            case Constants.COLOR_RED:
+                image = R.drawable.circle_red;
                 break;
         }
 
@@ -199,6 +206,30 @@ public class MainFragment extends Fragment implements Validable {
     @Override
     public void onValidationFailed() {
         Log.e(TAG, "failed validation");
+    }
+
+    private void errorTrigger(){
+        setAllImagesToColor(Constants.COLOR_RED);
+        errorPlayMusic();
+    }
+
+    private void errorPlayMusic(){
+
+        Log.d(TAG, "playing PIPIPIIPPIIP");
+
+        MediaPlayer mp;
+
+        mp = MediaPlayer.create(getActivity(), R.raw.phone_off);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                // TODO Auto-generated method stub
+                mp.release();
+            }
+
+        });
+        mp.start();
     }
 
     @Override
