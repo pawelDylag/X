@@ -12,5 +12,6 @@ public class Constants {
     public static final int COLOR_GREY = 0;
     public static final int COLOR_LIGHT_GREEN = 1;
     public static final int COLOR_DARK_GREEN = 2;
+    public static final int COLOR_RED = 3;
 
 }

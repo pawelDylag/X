@@ -109,6 +109,9 @@ public class MainFragment extends Fragment implements Validable {
             case Constants.COLOR_DARK_GREEN:
                 image = R.drawable.circle_greend;
                 break;
+            case Constants.COLOR_RED:
+                image = R.drawable.circle_red;
+                break;
         }
 
         imageViewFirst.setImageResource(image);
@@ -131,6 +134,9 @@ public class MainFragment extends Fragment implements Validable {
                 break;
             case Constants.COLOR_DARK_GREEN:
                 image = R.drawable.circle_greend;
+                break;
+            case Constants.COLOR_RED:
+                image = R.drawable.circle_red;
                 break;
         }
 
@@ -200,6 +206,11 @@ public class MainFragment extends Fragment implements Validable {
     @Override
     public void onValidationFailed() {
         Log.e(TAG, "failed validation");
+    }
+
+    private void errorTrigger(){
+        setAllImagesToColor(Constants.COLOR_RED);
+        errorPlayMusic();
     }
 
     private void errorPlayMusic(){
