@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (nextDevice.deviceName.equals(GALAXY_NAME)) {
                             if (!isP2pConnected) {
-                                connectToP2PWifiDevice(nextDevice);
+                                // connectToP2PWifiDevice(nextDevice);
                             }
                         } else {
                             isP2pConnected = false;
