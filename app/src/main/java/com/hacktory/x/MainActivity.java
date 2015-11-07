@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
+import com.hacktory.x.receive.ReceiveFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
 import java.util.ArrayList;
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
@@ -55,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
         showProgressBar(true);
     }
 
-    private void setFragment(int selectedFragment) {
+
+
+    public void setFragment(int selectedFragment){
         Log.d(TAG, "selected fragment: " + selectedFragment);
 //        Fragment fragment = null;
         switch (selectedFragment) {
@@ -66,7 +72,10 @@ public class MainActivity extends AppCompatActivity {
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
-//              MessageFragment frasgment = new MessageFragment();
+                ReceiveFragment fragmentM = new ReceiveFragment();
+                FragmentTransaction ftM = getFragmentManager().beginTransaction();
+                ftM.replace(R.id.fragment_placeholder_main, fragmentM);
+                ftM.commit();
                 break;
             case Constants.FRAGMENT_SEND:
                 break;
@@ -74,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 //                fragment = new MainFragment();
                 break;
         }
-
 
     }
 
@@ -87,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void initIntentFilters() {
         Log.d(TAG, "initIntentFilters() called with: " + "");
+        
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
     }
 
     @Override
@@ -94,10 +107,6 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.disconnect();
         super.onDestroy();
         Log.d(TAG, "onDestroy ");
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
     }
 
     private void initP2PChannel() {
