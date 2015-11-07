@@ -10,7 +10,19 @@ import java.util.Locale;
  * Pojedyncza wiadomosc
  * Created by paweldylag on 07/11/15.
  */
-public class Message {
+public class Message implements Comparable {
+
+    @Override
+    public int compareTo(Object another) {
+        if (another instanceof Message) {
+            Message m = (Message) another;
+            if ( m.getTimestamp() > this.timestamp) return 1;
+            if ( m.getTimestamp() == this.timestamp) return 0;
+            if ( m.getTimestamp() < this.timestamp) return -1;
+            else return 100;
+        }
+        else throw new ArithmeticException("Not comparable");
+    }
 
     private String message;
     private long timestamp;
