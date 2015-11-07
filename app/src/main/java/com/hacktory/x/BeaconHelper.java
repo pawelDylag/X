@@ -126,6 +126,8 @@ public class BeaconHelper {
 
                     for (int k = 0; k < mockedMinors.size(); k++) {
                         if (ourMinors[k] != mockedMinors.get(k)) {
+                            Log.d(TAG, "isValidated : ourMinor: " + nameOf(ourMinors[k]));
+                            Log.d(TAG, "isValidated : current: " + nameOf(mockedMinors.get(k)));
                             validator.onValidationFailed();
                             return true;
                         }
@@ -143,16 +145,18 @@ public class BeaconHelper {
 
     }
 
-    public boolean sequencesNotEqual(@Nullable Validable validator) {
+    public boolean sequencesNotEqual(Validable validator) {
         int size = beaconSequence.size();
         if (size > 0) {
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < size; j++) {
                 if (ourMinors[j] != beaconSequence.get(j)) {
-                    return false;
-                } else if (validator != null) {
-                    validator.onValidationSuccess(j);
+                    return true;
+                } else {
+                    if (validator != null)
+                        validator.onValidationSuccess(j);
                 }
-        }
-        return true;
+            }
+            return false; //all OK, succesfully unlocking..
+        } else return false; //first beacon
     }
 }
