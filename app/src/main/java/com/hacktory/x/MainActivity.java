@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "I'm the group owner !");
                         try {
 
-                           Thread thread = new Thread(new Runnable() {
+                            Thread thread = new Thread(new Runnable() {
                                 @Override
                                 public void run() {
 
@@ -266,9 +266,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
-
-                        else if (info.groupFormed) {
+                    } else if (info.groupFormed) {
                         Log.d(TAG, "I'm the client !");
 
                         Thread clientThread = new Thread(new Runnable() {
@@ -481,7 +479,8 @@ public class MainActivity extends AppCompatActivity {
                 BeaconHelper.INSTANCE.printCurrentSequence();
                 BeaconHelper.INSTANCE.printTargetSequence();
                 if (BeaconHelper.INSTANCE.sequencesNotEqual()) {
-                    fragmentReference.onValidationFailed();
+                    if (fragmentReference != null)
+                        fragmentReference.onValidationFailed();
                 }
             }
         });

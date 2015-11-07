@@ -84,7 +84,8 @@ public class BeaconHelper {
 
     public boolean isValidated(@Nullable Validable validator) {
         Log.d(TAG, "isValidated ");
-
+        if (validator == null)
+            return false;
         List<Integer> mockedMinors = new ArrayList<>();
         mockedMinors.addAll(beaconSequence);
 
