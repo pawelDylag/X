@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 
 public class MainFragment extends Fragment {
@@ -14,6 +15,8 @@ public class MainFragment extends Fragment {
 //    private WhorlView progressBar;
 
     private Button buttonReceive;
+    private ImageView imageViewFirst, imageViewSecond, imageViewThird,
+            imageViewFourth, imageViewFifth;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -33,19 +36,28 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         getViews(view);
         setListeners();
+
+//        setAllImagesToColor(Constants.COLOR_GREY);
         return view;
     }
 
-    private void getViews(View view){
+    private void getViews(View view) {
 
         buttonReceive = (Button) view.findViewById(R.id.button_receive);
+
+        imageViewFirst = (ImageView) view.findViewById(R.id.imageView_first);
+        imageViewSecond = (ImageView) view.findViewById(R.id.imageView_second);
+        imageViewThird = (ImageView) view.findViewById(R.id.imageView_third);
+        imageViewFourth = (ImageView) view.findViewById(R.id.imageView_fourth);
+        imageViewFifth = (ImageView) view.findViewById(R.id.imageView_fifth);
+
     }
 
-    private void setListeners(){
+    private void setListeners() {
 
         buttonReceive.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +65,46 @@ public class MainFragment extends Fragment {
                 ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
             }
         });
+    }
+
+    public void setAllImagesToColor(int color){
+        int image = 0;
+        switch (color){
+            case Constants.COLOR_GREY:
+                image = R.drawable.circle_grey;
+                break;
+            case Constants.COLOR_LIGHT_GREEN:
+                image = R.drawable.circle_greenl;
+                break;
+            case Constants.COLOR_DARK_GREEN:
+                image = R.drawable.circle_greend;
+                break;
+        }
+
+        imageViewFirst.setImageResource(image);
+        imageViewSecond.setImageResource(image);
+        imageViewThird.setImageResource(image);
+        imageViewFourth.setImageResource(image);
+        imageViewFifth.setImageResource(image);
+
+    }
+
+    public void setImageColor (int color, ImageView imageView){
+
+        int image = 0;
+        switch (color){
+            case Constants.COLOR_GREY:
+                image = R.drawable.circle_grey;
+                break;
+            case Constants.COLOR_LIGHT_GREEN:
+                image = R.drawable.circle_greenl;
+                break;
+            case Constants.COLOR_DARK_GREEN:
+                image = R.drawable.circle_greend;
+                break;
+        }
+        
+        imageView.setImageResource(image);
     }
 
     @Override
