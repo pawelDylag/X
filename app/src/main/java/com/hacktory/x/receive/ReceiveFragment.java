@@ -72,7 +72,8 @@ public class ReceiveFragment extends Fragment {
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        messageListAdapter.addNewMessage(new Message("TEST", System.currentTimeMillis()));
+        messageListAdapter.addNewMessage(new Message("TEST", System.currentTimeMillis(), false));
+        messageListAdapter.addNewMessage(new Message("ENEMY!", System.currentTimeMillis(),true));
         return view;
     }
 

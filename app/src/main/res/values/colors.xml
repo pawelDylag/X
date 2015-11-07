@@ -3,5 +3,6 @@
     <color name="colorPrimary">#76ff03</color>
     <color name="colorPrimaryDark">#76ff03</color>
     <color name="colorAccent">#76ff03</color>
+    <color name="colorEnemy">#d2080c</color>
     <color name="background_material_light">#0a0808</color>
 </resources>
