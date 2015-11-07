@@ -12,6 +12,10 @@ import java.util.List;
  */
 public class Constants {
 
+    public static final int FRAGMENT_MAIN = 0;
+    public static final int FRAGMENT_RECEIVE = 1;
+    public static final int FRAGMENT_SEND = 2;
+
     public static final Region ALL_ESTIMOTE_BEACONS_REGION = new Region("rid", null, null, null);
     public static final Region CYAN_ESTIMOTE_REGION = new Region("rid", null, 54321, null);
     private static Comparator<? super Beacon> mostNearbyComparator = new Comparator<Beacon>() {
