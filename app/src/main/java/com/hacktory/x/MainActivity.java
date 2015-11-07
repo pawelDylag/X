@@ -84,15 +84,12 @@ public class MainActivity extends AppCompatActivity {
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
+
+        showProgressBar(true);
 //        initP2PChannel();
 //        initBroadcastReceiver();
 //        initPeerListener();
 //        initConnectionInfoListener();
-        showProgressBar(true);
-        initP2PChannel();
-        initBroadcastReceiver();
-        initPeerListener();
-        initConnectionInfoListener();
         showProgressBar(true, "Setup beacon ranging...");
     }
 
@@ -394,13 +391,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
