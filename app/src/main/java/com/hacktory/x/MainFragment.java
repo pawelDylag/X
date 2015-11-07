@@ -2,19 +2,29 @@ package com.hacktory.x;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.hacktory.x.interfaces.Validable;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements Validable {
+
+    private static final String TAG = MainFragment.class.getSimpleName();
+
     private MainActivity parentactivity;
 //    private WhorlView progressBar;
 
@@ -26,6 +36,10 @@ public class MainFragment extends Fragment {
 
     @Bind(R.id.button_send)
     public Button buttonSend;
+    /**
+     * current level of security, to display proper image
+     */
+    private int currentLevelOfSecurityBroken = -1;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -33,7 +47,6 @@ public class MainFragment extends Fragment {
     }
 
     public MainFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -49,13 +62,13 @@ public class MainFragment extends Fragment {
 
         getViews(view);
 
-//        setAllImagesToColor(Constants.COLOR_GREY);
+        setAllImagesToColor(Constants.COLOR_GREY);
         ButterKnife.bind(this, view);
         return view;
     }
 
     private void getViews(View view) {
-        
+
         imageViewFirst = (ImageView) view.findViewById(R.id.imageView_first);
         imageViewSecond = (ImageView) view.findViewById(R.id.imageView_second);
         imageViewThird = (ImageView) view.findViewById(R.id.imageView_third);
@@ -69,14 +82,26 @@ public class MainFragment extends Fragment {
         ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
     }
 
+    @OnLongClick(R.id.button_receive)
+    public boolean clearListOfValidatedBeacons1() {
+        BeaconHelper.clearCurrentSequence();
+        return false;
+    }
+
+    @OnLongClick(R.id.button_send)
+    public boolean clearListOfValidatedBeacons2() {
+        BeaconHelper.clearCurrentSequence();
+        return false;
+    }
+
     @OnClick(R.id.button_send)
     public void switchToSend() {
         ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_SEND);
     }
 
-    public void setAllImagesToColor(int color){
+    public void setAllImagesToColor(int color) {
         int image = 0;
-        switch (color){
+        switch (color) {
             case Constants.COLOR_GREY:
                 image = R.drawable.circle_grey;
                 break;
@@ -85,6 +110,9 @@ public class MainFragment extends Fragment {
                 break;
             case Constants.COLOR_DARK_GREEN:
                 image = R.drawable.circle_greend;
+                break;
+            case Constants.COLOR_RED:
+                image = R.drawable.circle_red;
                 break;
         }
 
@@ -96,10 +124,10 @@ public class MainFragment extends Fragment {
 
     }
 
-    public void setImageColor (int color, ImageView imageView){
+    public void setImageColor(int color, ImageView imageView) {
 
         int image = 0;
-        switch (color){
+        switch (color) {
             case Constants.COLOR_GREY:
                 image = R.drawable.circle_grey;
                 break;
@@ -109,9 +137,45 @@ public class MainFragment extends Fragment {
             case Constants.COLOR_DARK_GREEN:
                 image = R.drawable.circle_greend;
                 break;
+            case Constants.COLOR_RED:
+                image = R.drawable.circle_red;
+                break;
         }
-        
+
         imageView.setImageResource(image);
+    }
+
+    public void setImageColorWithLevel(int level) {
+
+        int image = R.drawable.circle_greenl;
+
+        switch (level) {
+            case 0:
+                imageViewFirst.setImageResource(image);
+                break;
+            case 1:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                break;
+            case 2:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                imageViewThird.setImageResource(image);
+                break;
+            case 3:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                imageViewThird.setImageResource(image);
+                imageViewFourth.setImageResource(image);
+                break;
+            case 4:
+                imageViewFirst.setImageResource(image);
+                imageViewSecond.setImageResource(image);
+                imageViewThird.setImageResource(image);
+                imageViewFourth.setImageResource(image);
+                imageViewFifth.setImageResource(image);
+                break;
+        }
     }
 
     @Override
@@ -125,4 +189,63 @@ public class MainFragment extends Fragment {
         super.onDetach();
 
     }
+
+    @Override
+    public void onValidationSuccess(final int levelOfSecurityBroken) {
+        Log.i(TAG, "validationSucces, level: " + levelOfSecurityBroken);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (currentLevelOfSecurityBroken < levelOfSecurityBroken) {
+                    currentLevelOfSecurityBroken = levelOfSecurityBroken;
+                    setImageColorWithLevel(levelOfSecurityBroken);
+                    if (levelOfSecurityBroken == 4) {
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                parentactivity.setFragment(Constants.FRAGMENT_RECEIVE);
+                            }
+                        }, 3000);
+                    }
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onValidationFailed() {
+        Log.e(TAG, "failed validation");
+        errorTrigger();
+    }
+
+    private void errorTrigger() {
+        setAllImagesToColor(Constants.COLOR_RED);
+        errorPlayMusic();
+    }
+
+    private void errorPlayMusic() {
+
+        Log.d(TAG, "playing PIPIPIIPPIIP");
+
+        MediaPlayer mp;
+
+        mp = MediaPlayer.create(getActivity(), R.raw.phone_off);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                // TODO Auto-generated method stub
+                mp.release();
+            }
+
+        });
+        mp.start();
+    }
+
+    @Override
+    public void onSequenceRestart() {
+        BeaconHelper.clearCurrentSequence();
+    }
+
 }
