@@ -274,12 +274,16 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 try {
+                                    Log.d(TAG, "I'm sending !");
+                                    Thread.sleep(3000);
                                     Socket socket = new Socket(info.groupOwnerAddress, PORT);
                                     OutputStream outputStream = socket.getOutputStream();
                                     outputStream.write(Byte.valueOf("Send a message to server !"));
                                     outputStream.close();
 
                                 } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
                             }
