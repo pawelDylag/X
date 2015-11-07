@@ -8,15 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class RangeFragment extends Fragment {
+public class MainFragment extends Fragment {
     private MainActivity parentactivity;
 
-    public static RangeFragment newInstance() {
-        RangeFragment fragment = new RangeFragment();
+    public static MainFragment newInstance() {
+        MainFragment fragment = new MainFragment();
         return fragment;
     }
 
-    public RangeFragment() {
+    public MainFragment() {
         // Required empty public constructor
     }
 
