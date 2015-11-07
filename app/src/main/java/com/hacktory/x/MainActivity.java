@@ -1,5 +1,7 @@
 package com.hacktory.x;
 
+import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +9,6 @@ import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.app.FragmentTransaction;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,11 +18,15 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
+import com.hacktory.x.receive.ReceiveFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +34,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ENABLE_BT = 1234;
     private BeaconManager beaconManager;
-    private WhorlView progressBar;
+    private List<Beacon> filteredSortedList = new ArrayList<>();
+
+    @Bind(R.id.progressBarRanging)
+    public WhorlView progressBar;
 
     private IntentFilter intentFilter = new IntentFilter();
     private BroadcastReceiver broadcastReceiver;
@@ -45,18 +51,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
 
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
         initP2PChannel();
         initBroadcastReceiver();
+        showProgressBar(true);
     }
 
-    private void setFragment(int selectedFragment){
+
+
+    public void setFragment(int selectedFragment){
         Log.d(TAG, "selected fragment: " + selectedFragment);
 //        Fragment fragment = null;
-        switch (selectedFragment){
+        switch (selectedFragment) {
             case Constants.FRAGMENT_MAIN:
                 MainFragment fragment = new MainFragment();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -64,7 +75,10 @@ public class MainActivity extends AppCompatActivity {
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
-//              MessageFragment frasgment = new MessageFragment();
+                ReceiveFragment fragmentM = new ReceiveFragment();
+                FragmentTransaction ftM = getFragmentManager().beginTransaction();
+                ftM.replace(R.id.fragment_placeholder_main, fragmentM);
+                ftM.commit();
                 break;
             case Constants.FRAGMENT_SEND:
                 break;
@@ -72,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
 //                fragment = new MainFragment();
                 break;
         }
-
 
     }
 
@@ -211,8 +224,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 showProgressBar(false);
-               // Collections.sort(list, Constants.getMostNearbyComparator());
-                for (Beacon beacon : list) {
+                filteredSortedList.clear();
+                filteredSortedList.addAll(list);
+                Collections.sort(filteredSortedList, Constants.getMostNearbyComparator());
+                for (Beacon beacon : filteredSortedList) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
@@ -221,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconManager.startRanging(Constants.ALL_ESTIMOTE_BEACONS_REGION);
+                beaconManager.startRanging(Constants.OUR_BEACONS_REGION);
 //                beaconManager.startNearableDiscovery();
             }
         });
