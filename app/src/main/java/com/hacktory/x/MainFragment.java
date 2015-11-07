@@ -9,14 +9,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 public class MainFragment extends Fragment {
     private MainActivity parentactivity;
 //    private WhorlView progressBar;
 
+    @Bind(R.id.button_receive)
+    public Button buttonReceive;
     private Button buttonReceive;
     private ImageView imageViewFirst, imageViewSecond, imageViewThird,
             imageViewFourth, imageViewFifth;
+
+    @Bind(R.id.button_send)
+    public Button buttonSend;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -42,6 +51,8 @@ public class MainFragment extends Fragment {
         setListeners();
 
 //        setAllImagesToColor(Constants.COLOR_GREY);
+        View view =  inflater.inflate(R.layout.fragment_main, container, false);
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -55,8 +66,14 @@ public class MainFragment extends Fragment {
         imageViewFourth = (ImageView) view.findViewById(R.id.imageView_fourth);
         imageViewFifth = (ImageView) view.findViewById(R.id.imageView_fifth);
 
+    @OnClick(R.id.button_receive)
+    public void switchToReceive() {
+        ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
     }
 
+    @OnClick(R.id.button_send)
+    public void switchToSend() {
+        ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_SEND);
     private void setListeners() {
 
         buttonReceive.setOnClickListener(new View.OnClickListener() {
