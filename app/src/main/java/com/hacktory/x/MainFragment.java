@@ -11,6 +11,7 @@ import android.widget.Button;
 
 public class MainFragment extends Fragment {
     private MainActivity parentactivity;
+//    private WhorlView progressBar;
 
     private Button buttonReceive;
 
