@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -143,11 +145,11 @@ public class MainFragment extends Fragment implements Validable {
         imageView.setImageResource(image);
     }
 
-    public void setImageColorWithLevel (int level){
+    public void setImageColorWithLevel(int level) {
 
         int image = R.drawable.circle_greenl;
 
-        switch (level){
+        switch (level) {
             case 0:
                 imageViewFirst.setImageResource(image);
                 break;
@@ -197,6 +199,14 @@ public class MainFragment extends Fragment implements Validable {
                 if (currentLevelOfSecurityBroken < levelOfSecurityBroken) {
                     currentLevelOfSecurityBroken = levelOfSecurityBroken;
                     setImageColorWithLevel(levelOfSecurityBroken);
+                    if (levelOfSecurityBroken == 4) {
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                parentactivity.setFragment(Constants.FRAGMENT_RECEIVE);
+                            }
+                        }, 3000);
+                    }
                 }
             }
         });
@@ -209,12 +219,12 @@ public class MainFragment extends Fragment implements Validable {
         errorTrigger();
     }
 
-    private void errorTrigger(){
+    private void errorTrigger() {
         setAllImagesToColor(Constants.COLOR_RED);
         errorPlayMusic();
     }
 
-    private void errorPlayMusic(){
+    private void errorPlayMusic() {
 
         Log.d(TAG, "playing PIPIPIIPPIIP");
 
