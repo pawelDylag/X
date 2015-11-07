@@ -6,13 +6,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -22,6 +30,7 @@ import com.hacktory.x.receive.ReceiveFragment;
 import com.hacktory.x.send.SendFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,14 +47,22 @@ public class MainActivity extends AppCompatActivity {
     private BeaconManager beaconManager;
     private List<Beacon> filteredSortedList = new ArrayList<>();
 
+    private static MainFragment fragmentReference = null;
+
     @Bind(R.id.progressBarRanging)
     public WhorlView progressBar;
+    @Bind(R.id.parent)
+    public RelativeLayout parent;
 
     private IntentFilter intentFilter = new IntentFilter();
     private BroadcastReceiver broadcastReceiver;
 
+    private static final String GALAXY_NAME = "Galaxy S5";
+    private boolean isP2pConnected = false;
+
     WifiP2pManager.Channel p2pChannel;
     WifiP2pManager p2pManager;
+    WifiP2pManager.ConnectionInfoListener connectionInfoListener;
 
     private WifiP2pManager.PeerListListener peerListListener;
 
@@ -60,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
         initIntentFilters();
         initP2PChannel();
         initBroadcastReceiver();
+        initPeerListener();
+        initConnectionInfoListener();
         showProgressBar(true);
+        showProgressBar(true, "Setup beacon ranging...");
     }
 
 
@@ -71,11 +91,13 @@ public class MainActivity extends AppCompatActivity {
             case Constants.FRAGMENT_MAIN:
                 SELECTED_FRAGMENT = Constants.FRAGMENT_MAIN;
                 MainFragment fragment = MainFragment.newInstance();
+                fragmentReference = fragment;
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_placeholder_main, fragment);
                 ft.commit();
                 break;
             case Constants.FRAGMENT_RECEIVE:
+                fragmentReference = null;
                 SELECTED_FRAGMENT = Constants.FRAGMENT_RECEIVE;
                 ReceiveFragment fragmentR = ReceiveFragment.newInstance();
                 FragmentTransaction ftR = getFragmentManager().beginTransaction();
@@ -83,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 ftR.commit();
                 break;
             case Constants.FRAGMENT_SEND:
+                fragmentReference = null;
                 SELECTED_FRAGMENT = Constants.FRAGMENT_SEND;
                 SendFragment fragmentS = SendFragment.newInstance();
                 FragmentTransaction ftS = getFragmentManager().beginTransaction();
@@ -90,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 ftS.commit();
                 break;
             default:
+                fragmentReference = null;
 //                fragment = new MainFragment();
                 break;
         }
@@ -129,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "discoverPeers(): onSuccess");
-                initPeerListener();
+
             }
 
             @Override
@@ -147,8 +171,75 @@ public class MainActivity extends AppCompatActivity {
             public void onPeersAvailable(WifiP2pDeviceList peerList) {
                 Log.d(TAG, "Peers available: " + peerList.getDeviceList().size());
 
+                if(peerList.getDeviceList().size() > 0 ) {
+
+                    for (WifiP2pDevice nextDevice : peerList.getDeviceList()) {
+
+                        if (nextDevice.deviceName.equals(GALAXY_NAME)) {
+                            if (!isP2pConnected) {
+//                                connectToP2PWifiDevice(nextDevice);
+                            }
+                        }
+
+                        else {
+                            isP2pConnected = false;
+                        }
+
+                        Log.d(TAG, "Wifi_p2p scanned devices - device name: " + nextDevice.deviceName);
+                        Log.d(TAG, "Wifi_p2p scanned devices - device address: " + nextDevice.deviceAddress);
+
+                    }
+                }
             }
         };
+    }
+
+    private void initConnectionInfoListener() {
+        Log.d(TAG, "initConnectionInfoListener() called with: " + "");
+
+        connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+            @Override
+            public void onConnectionInfoAvailable(WifiP2pInfo info) {
+                Log.d(TAG, "onConnectionInfoAvailable");
+
+                // InetAddress from WifiP2pInfo struct.
+                String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
+
+                // After the group negotiation, we can determine the group owner.
+                if (info.groupFormed && info.isGroupOwner) {
+                    Log.d(TAG, "I'm the group owner !");
+                    // Do whatever tasks are specific to the group owner.
+                    // One common case is creating a server thread and accepting
+                    // incoming connections.
+                } else if (info.groupFormed) {
+                    Log.d(TAG, "I'm the client !");
+                    // The other device acts as the client. In this case,
+                    // you'll want to create a client thread that connects to the group
+                    // owner.
+                }
+            }
+        };
+    }
+
+    private void connectToP2PWifiDevice(final WifiP2pDevice device) {
+        Log.d(TAG, "connectToP2PWifiDevice() called with: " + "device = [" + device + "]");
+
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = device.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+
+        p2pManager.connect(p2pChannel, config, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Connected to a: " + device.deviceName);
+                isP2pConnected = true;
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Log.d(TAG, "Connection failured !");
+            }
+        });
     }
 
     private void initBroadcastReceiver() {
@@ -174,9 +265,28 @@ public class MainActivity extends AppCompatActivity {
                     // The peer list has changed!  We should probably do something about
                     // that.
 
+                    if (p2pManager != null) {
+                        p2pManager.requestPeers(p2pChannel, peerListListener);
+                    }
+
 
                 } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
                     Log.d(TAG, "Wifi_P2P_connection_changed !");
+
+                    if (p2pManager == null) {
+                        return;
+                    }
+
+                    NetworkInfo networkInfo = (NetworkInfo) intent
+                            .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+                    if (networkInfo.isConnected()) {
+                        Log.d(TAG, "Network info(): connected !");
+                        p2pManager.requestConnectionInfo(p2pChannel, connectionInfoListener);
+                    }
+                    else {
+                        Log.d(TAG, "Network info(): disconnected !");
+                    }
 
                 } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
                     Log.d(TAG, "Wifi_P2P_this_device_changed !");
@@ -218,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (SELECTED_FRAGMENT!=Constants.FRAGMENT_MAIN){
+        if (SELECTED_FRAGMENT != Constants.FRAGMENT_MAIN) {
             setFragment(Constants.FRAGMENT_MAIN);
         } else {
             super.onBackPressed();
@@ -227,13 +337,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showProgressBar(final boolean show) {
+        showProgressBar(show, null);
+    }
+
+    public void showProgressBar(final boolean show, @Nullable String message) {
         Log.d(TAG, "showProgressBar " + show);
         if (progressBar == null)
             return;
-        int vis = show ? View.VISIBLE : View.GONE;
-        if (show) progressBar.start();
-        else progressBar.stop();
-        progressBar.setVisibility(vis);
+        if (show) {
+            progressBar.start();
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.stop();
+            progressBar.setVisibility(View.GONE);
+        }
+        if (message != null)
+            Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
+
+        parent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return show;
+            }
+        });
     }
 
     private void connectToService() {
@@ -241,7 +367,13 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
-                showProgressBar(false);
+                if (list == null || list.size() == 0)
+                    return;
+                if (BeaconHelper.firstScan) {
+                    BeaconHelper.firstScan = false;
+                    showProgressBar(false, "Beacon scan started!");
+                }
+
                 filteredSortedList.clear();
                 filteredSortedList.addAll(list);
                 Collections.sort(filteredSortedList, BeaconHelper.getMostNearbyComparator());
@@ -249,10 +381,13 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
-                if (BeaconHelper.INSTANCE.isValidatingFinished()) {
+                BeaconHelper.INSTANCE.insertNewCheckPoint(filteredSortedList.get(0));
+                if (BeaconHelper.INSTANCE.isValidatingFinished(fragmentReference)) {
                     Log.i(TAG, "sequence valid!!!");
                 } else {
                     Log.i(TAG, "sequence invalid!!!");
+                    BeaconHelper.INSTANCE.printCurrentSequence();
+                    BeaconHelper.INSTANCE.printTargetSequence();
                 }
             }
         });
