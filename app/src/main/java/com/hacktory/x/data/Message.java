@@ -1,6 +1,6 @@
 package com.hacktory.x.data;
 
-import android.text.format.DateUtils;
+import android.support.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.Locale;
 public class Message implements Comparable {
 
     @Override
-    public int compareTo(Object another) {
+    public int compareTo(@NonNull Object another) {
         if (another instanceof Message) {
             Message m = (Message) another;
             if ( m.getTimestamp() > this.timestamp) return 1;

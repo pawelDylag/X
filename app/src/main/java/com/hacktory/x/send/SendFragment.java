@@ -1,20 +1,17 @@
 package com.hacktory.x.send;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.hacktory.x.Constants;
 import com.hacktory.x.R;
-import com.hacktory.x.connection.Connector;
 import com.hacktory.x.data.Message;
 import com.parse.ParseObject;
 
@@ -33,8 +30,7 @@ public class SendFragment extends Fragment {
 
 
     public static SendFragment newInstance() {
-        SendFragment fragment = new SendFragment();
-        return fragment;
+        return new SendFragment();
     }
 
     public SendFragment() {

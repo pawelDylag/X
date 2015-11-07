@@ -3,10 +3,10 @@ package com.hacktory.x;
 import android.app.Application;
 
 import com.parse.Parse;
-import com.parse.ParseInstallation;
 
 /**
  * Created by paweldylag on 07/11/15.
+ * Important extension for Parse integration
  */
 public class App extends Application {
 

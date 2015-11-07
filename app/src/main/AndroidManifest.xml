@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hacktory.x">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -23,10 +22,6 @@
         android:name="android.permission.CHANGE_WIFI_STATE"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -79,17 +74,18 @@
         <receiver android:name=".MySecretCodeReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SECRET_CODE" />
-                <data
-                    android:host="54321"
-                    android:scheme="android_secret_code" />
+
                 <data
                     android:host="9900"
                     android:scheme="android_secret_code" />
                 <data
-                    android:host="4636"
+                    android:host="9090"
                     android:scheme="android_secret_code" />
                 <data
                     android:host="06"
+                    android:scheme="android_secret_code" />
+                <data
+                    android:host="0"
                     android:scheme="android_secret_code" />
             </intent-filter>
         </receiver>

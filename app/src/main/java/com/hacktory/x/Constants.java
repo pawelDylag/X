@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Created by lukasz on 07.11.15.
+ * Constants and static fields used
  */
 public class Constants {
 

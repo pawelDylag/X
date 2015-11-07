@@ -282,9 +282,7 @@ public class MainActivity extends AppCompatActivity {
                                     outputStream.write(Byte.valueOf("Send a message to server !"));
                                     outputStream.close();
 
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
+                                } catch (IOException | InterruptedException e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -353,8 +351,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    NetworkInfo networkInfo = (NetworkInfo) intent
-                            .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+                    NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
                     if (networkInfo.isConnected()) {
                         Log.d(TAG, "Network info(): connected !");
@@ -401,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (SELECTED_FRAGMENT==Constants.FRAGMENT_RECEIVE){
+        if (SELECTED_FRAGMENT == Constants.FRAGMENT_RECEIVE) {
             setFragment(Constants.FRAGMENT_MAIN);
         } else if (SELECTED_FRAGMENT == Constants.FRAGMENT_SEND) {
             setFragment(Constants.FRAGMENT_RECEIVE);
