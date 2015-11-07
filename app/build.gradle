@@ -24,7 +24,8 @@ dependencies {
     // jUnit
     testCompile 'junit:junit:4.12'
     // app compat
-    compile 'com.android.support:appcompat-v7:23.1.0'
     // estimote beacons
+    compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.estimote:sdk:0.9.4@aar'
+    compile 'com.android.support:design:23.1.0'
 }
