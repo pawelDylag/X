@@ -3,6 +3,7 @@ package com.hacktory.x.receive;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,12 @@ public class ReceiveFragment extends Fragment {
      */
     private MessageListAdapter messageListAdapter;
 
+    /**
+     * Recycler layout manager
+     */
+    private RecyclerView.LayoutManager layoutManager;
+
+
     public static ReceiveFragment newInstance() {
         ReceiveFragment fragment = new ReceiveFragment();
         return fragment;
@@ -50,6 +57,7 @@ public class ReceiveFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        messageListAdapter = new MessageListAdapter(new ArrayList<Message>());
     }
 
     @Override
@@ -57,8 +65,13 @@ public class ReceiveFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message_list, container, false);
         ButterKnife.bind(this, view);
-        messageListAdapter = new MessageListAdapter(new ArrayList<Message>());
         recyclerView.setAdapter(messageListAdapter);
+
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
         messageListAdapter.addNewMessage(new Message("TEST", System.currentTimeMillis()));
         return view;
     }

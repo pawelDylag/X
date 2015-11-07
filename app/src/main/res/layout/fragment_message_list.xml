@@ -5,10 +5,25 @@
     android:layout_height="match_parent"
     tools:context="com.hacktory.x.receive.ReceiveFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_receive_recycler"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            android:padding="10dp"
+            android:text="Messages"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fragment_receive_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
 </FrameLayout>
