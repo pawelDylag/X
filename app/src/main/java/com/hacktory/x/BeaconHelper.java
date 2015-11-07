@@ -24,6 +24,23 @@ public class BeaconHelper {
      */
     private static final int[] ourMinors = new int[]{33961, 53043, 57840, 3104, 62776};
 
+    private String nameOf(int minor) {
+        switch (minor) {
+            case 33961:
+                return "Arek";
+            case 53043:
+                return "Łukasz";
+            case 57840:
+                return "Patryk";
+            case 3104:
+                return "Magda";
+            case 62776:
+                return "Paweł";
+            default:
+                return "Unknown";
+        }
+    }
+
     private static Comparator<? super Beacon> mostNearbyComparator = new Comparator<Beacon>() {
         @Override
         public int compare(Beacon lhs, Beacon rhs) {
@@ -67,7 +84,7 @@ public class BeaconHelper {
     public void printCurrentSequence() {
         String sequence = "";
         for (Integer integer : beaconSequence) {
-            sequence += integer + ",";
+            sequence += nameOf(integer) + ",";
         }
         Log.d(TAG, "current sequence: " + sequence);
     }
@@ -75,9 +92,9 @@ public class BeaconHelper {
     public void printTargetSequence() {
         String sequence = "";
         for (Integer integer : ourMinors) {
-            sequence += integer + ",";
+            sequence += nameOf(integer) + ",";
         }
-        Log.d(TAG, "target sequence: " + sequence);
+        Log.d(TAG, "current sequence: " + sequence);
     }
 
     private int currentAchieved = -1;
@@ -93,10 +110,7 @@ public class BeaconHelper {
             if (ourMinors[j] == mockedMinors.get(j)) {
                 String message = "validation level " + (1 + j) + " achieved";
                 Log.d(TAG, message);
-                if (validator == null) {
-                    Log.e(TAG, "validator is null");
-                    return false;
-                } else if (currentAchieved < j) {
+                if (currentAchieved < j) {
                     currentAchieved = j;
                     validator.onValidationSuccess(j);
                     return true;
@@ -121,12 +135,15 @@ public class BeaconHelper {
 
     }
 
-    public boolean sequencesNotEqual() {
+    public boolean sequencesNotEqual(@Nullable Validable validator) {
         int size = beaconSequence.size();
         if (size > 0) {
             for (int j = 0; j < size; j++)
-                if (ourMinors[j] != beaconSequence.get(j))
+                if (ourMinors[j] != beaconSequence.get(j)) {
                     return false;
+                } else if (validator != null) {
+                    validator.onValidationSuccess(j);
+                }
         }
         return true;
     }

@@ -471,14 +471,14 @@ public class MainActivity extends AppCompatActivity {
                 if (Utils.computeProximity(mostPowerful).compareTo(Utils.Proximity.IMMEDIATE) == 0)
                     BeaconHelper.INSTANCE.insertNewCheckPoint(mostPowerful);
 //                BeaconHelper.INSTANCE.isValidatingFinishedVOID(fragmentReference);
-                if (BeaconHelper.INSTANCE.isValidated(fragmentReference)) {
-                    Log.i(TAG, "sequence valid!!!");
-                } else {
-                    Log.i(TAG, "sequence invalid!!!");
-                }
+//                if (BeaconHelper.INSTANCE.isValidated(fragmentReference)) {
+//                    Log.i(TAG, "sequence valid!!!");
+//                } else {
+//                    Log.i(TAG, "sequence invalid!!!");
+//                }
                 BeaconHelper.INSTANCE.printCurrentSequence();
                 BeaconHelper.INSTANCE.printTargetSequence();
-                if (BeaconHelper.INSTANCE.sequencesNotEqual()) {
+                if (BeaconHelper.INSTANCE.sequencesNotEqual(fragmentReference)) {
                     if (fragmentReference != null)
                         fragmentReference.onValidationFailed();
                 }
