@@ -19,11 +19,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     ArrayList<Message> messages;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public TextView textView;
+        public TextView textView, timeView;
         public ViewHolder(View v) {
             super(v);
             textView = (TextView) v.findViewById(R.id.message_card_text);
+            timeView = (TextView) v.findViewById(R.id.message_card_time);
         }
     }
 
@@ -42,10 +42,16 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.textView.setText(messages.get(position).getMessage());
+        holder.timeView.setText(messages.get(position).getReadableTimestamp());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return messages.size();
+    }
+
+    public void addNewMessage(Message m) {
+        this.messages.add(m);
+        notifyDataSetChanged();
     }
 }

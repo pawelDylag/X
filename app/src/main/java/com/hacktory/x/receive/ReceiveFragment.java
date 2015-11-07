@@ -15,6 +15,7 @@ import com.hacktory.x.R;
 import java.util.ArrayList;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class ReceiveFragment extends Fragment {
 
@@ -49,17 +50,19 @@ public class ReceiveFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        messageListAdapter = new MessageListAdapter(new ArrayList<Message>());
-        recyclerView.setAdapter(messageListAdapter);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message_list, container, false);
+        ButterKnife.bind(this, view);
+        messageListAdapter = new MessageListAdapter(new ArrayList<Message>());
+        recyclerView.setAdapter(messageListAdapter);
+        messageListAdapter.addNewMessage(new Message("TEST", System.currentTimeMillis()));
         return view;
     }
+
 
 
 

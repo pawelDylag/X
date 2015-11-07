@@ -5,9 +5,10 @@
     android:layout_height="match_parent"
     tools:context="com.hacktory.x.receive.ReceiveFragment">
 
-    <RecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_receive_recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
 
 </FrameLayout>
