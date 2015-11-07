@@ -6,13 +6,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.progressBarRanging)
     public WhorlView progressBar;
+    @Bind(R.id.parent)
+    public RelativeLayout parent;
 
     private IntentFilter intentFilter = new IntentFilter();
     private BroadcastReceiver broadcastReceiver;
@@ -58,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         initIntentFilters();
         initP2PChannel();
         initBroadcastReceiver();
-        showProgressBar(true);
+        showProgressBar(true, "Setup beacon ranging...", "Ranging activated!");
     }
 
 
@@ -207,13 +212,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showProgressBar(final boolean show) {
+        showProgressBar(show, null, null);
+    }
+
+    public void showProgressBar(final boolean show, @Nullable String showMessage, @Nullable String hideMessage) {
         Log.d(TAG, "showProgressBar " + show);
         if (progressBar == null)
             return;
-        int vis = show ? View.VISIBLE : View.GONE;
-        if (show) progressBar.start();
-        else progressBar.stop();
-        progressBar.setVisibility(vis);
+        if (show) {
+            progressBar.start();
+            progressBar.setVisibility(View.VISIBLE);
+            if (showMessage != null)
+                Snackbar.make(parent, showMessage, Snackbar.LENGTH_SHORT).show();
+        } else {
+            progressBar.stop();
+            progressBar.setVisibility(View.GONE);
+            if (hideMessage != null)
+                Snackbar.make(parent, hideMessage, Snackbar.LENGTH_SHORT).show();
+        }
+        parent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return show;
+            }
+        });
     }
 
     private void connectToService() {
