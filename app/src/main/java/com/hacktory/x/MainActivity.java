@@ -67,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
-        initP2PChannel();
-        initBroadcastReceiver();
-        initPeerListener();
-        initConnectionInfoListener();
+//        initP2PChannel();
+//        initBroadcastReceiver();
+//        initPeerListener();
+//        initConnectionInfoListener();
         showProgressBar(true);
     }
 
@@ -315,8 +315,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (SELECTED_FRAGMENT!=Constants.FRAGMENT_MAIN){
+        if (SELECTED_FRAGMENT==Constants.FRAGMENT_RECEIVE){
             setFragment(Constants.FRAGMENT_MAIN);
+        } else if (SELECTED_FRAGMENT == Constants.FRAGMENT_SEND) {
+            setFragment(Constants.FRAGMENT_RECEIVE);
         } else {
             super.onBackPressed();
         }

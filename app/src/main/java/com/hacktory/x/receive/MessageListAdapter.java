@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hacktory.x.Constants;
 import com.hacktory.x.data.Message;
 import com.hacktory.x.R;
 
@@ -32,7 +33,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     }
 
     public MessageListAdapter(ArrayList<Message> messages) {
-        this.messages = messages;
+        this.messages = Constants.messages;
     }
 
     @Override
@@ -58,6 +59,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     public void addNewMessage(Message m) {
         this.messages.add(m);
+        notifyDataSetChanged();
+    }
+
+    public void resetMessages() {
+        this.messages = Constants.messages;
         notifyDataSetChanged();
     }
 }
