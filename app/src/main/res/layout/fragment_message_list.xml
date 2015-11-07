@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
-        android:src="@drawable/button"
+        android:src="@drawable/add_plus"
         app:layout_anchor="@id/fragment_receive_recycler"
         app:layout_anchorGravity="bottom|right|end"/>
 

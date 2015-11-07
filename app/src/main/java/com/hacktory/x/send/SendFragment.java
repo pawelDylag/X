@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.hacktory.x.Constants;
 import com.hacktory.x.R;
@@ -28,7 +29,7 @@ public class SendFragment extends Fragment {
     EditText editText;
 
     @Bind(R.id.fragment_send_button)
-    Button sendButton;
+    ImageView sendButton;
 
 
     public static SendFragment newInstance() {
