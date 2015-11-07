@@ -33,7 +33,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_range, container, false);
+        View view =  inflater.inflate(R.layout.fragment_main, container, false);
 
         getViews(view);
         setListeners();
