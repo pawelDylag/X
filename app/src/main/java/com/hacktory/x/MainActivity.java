@@ -18,7 +18,12 @@ import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
 import com.tt.whorlviewlibrary.WhorlView;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +31,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ENABLE_BT = 1234;
     private BeaconManager beaconManager;
-    private WhorlView progressBar;
+    private List<Beacon> filteredSortedList = new ArrayList<>();
+
+    @Bind(R.id.progressBarRanging)
+    public WhorlView progressBar;
 
     private IntentFilter intentFilter = new IntentFilter();
     private BroadcastReceiver broadcastReceiver;
@@ -38,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
         setFragment(Constants.FRAGMENT_MAIN);
         setupEstimoteSDK();
         initIntentFilters();
@@ -180,8 +188,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 showProgressBar(false);
-                // Collections.sort(list, Constants.getMostNearbyComparator());
-                for (Beacon beacon : list) {
+                filteredSortedList.clear();
+                filteredSortedList.addAll(list);
+                Collections.sort(filteredSortedList, Constants.getMostNearbyComparator());
+                for (Beacon beacon : filteredSortedList) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
@@ -190,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconManager.startRanging(Constants.ALL_ESTIMOTE_BEACONS_REGION);
+                beaconManager.startRanging(Constants.OUR_BEACONS_REGION);
 //                beaconManager.startNearableDiscovery();
             }
         });
