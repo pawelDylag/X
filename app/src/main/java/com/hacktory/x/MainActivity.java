@@ -3,6 +3,8 @@ package com.hacktory.x;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1234;
     private BeaconManager beaconManager;
     private WhorlView progressBar;
+    public boolean discoveredFirstTime = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +38,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setFragment(int selectedFragment) {
         Log.d(TAG, "selected fragment: " + selectedFragment);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_placeholder, getFragmentFromID(selectedFragment))
+                .commit();
+    }
 
+    private Fragment getFragmentFromID(int selectedFragment) {
+        switch (selectedFragment) {
+            default:
+            case Constants.FRAGMENT_MAIN:
+                return MainFragment.newInstance();
+        }
     }
 
     private void setupEstimoteSDK() {
@@ -65,10 +78,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showProgressBar(final boolean show) {
+    public void showProgressBar(final boolean show, @NonNull WhorlView progressBar) {
         Log.d(TAG, "showProgressBar " + show);
-        if (progressBar == null)
-            return;
         int vis = show ? View.VISIBLE : View.GONE;
         if (show) progressBar.start();
         else progressBar.stop();
@@ -81,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 Log.d(TAG, "onBeaconsDiscovered ");
-                showProgressBar(false);
+                discoveredFirstTime = true;
                 modifableList.clear();
                 modifableList.addAll(list);
                 Collections.sort(modifableList, Constants.getMostNearbyComparator());
