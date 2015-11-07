@@ -94,10 +94,14 @@ public class BeaconHelper {
                 Log.d(TAG, message);
                 if (validator != null)
                     validator.onValidationSuccess(j);
+                else
+                    Log.e(TAG, "validator: " + validator);
             } else {
                 if (ourMinors.length == beaconSequence.size())
                     if (validator != null)
                         validator.onValidationFailed();
+                    else
+                        Log.e(TAG, "validator: " + validator);
                 return false;
             }
         }

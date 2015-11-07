@@ -3,6 +3,7 @@ package com.hacktory.x;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,9 @@ import butterknife.OnLongClick;
 
 
 public class MainFragment extends Fragment implements Validable {
+
+    private static final String TAG = MainFragment.class.getSimpleName();
+
     private MainActivity parentactivity;
 //    private WhorlView progressBar;
 
@@ -76,13 +80,15 @@ public class MainFragment extends Fragment implements Validable {
     }
 
     @OnLongClick(R.id.button_receive)
-    public void clearListOfValidatedBeacons1() {
+    public boolean clearListOfValidatedBeacons1() {
         BeaconHelper.clearCurrentSequence();
+        return false;
     }
 
     @OnLongClick(R.id.button_send)
-    public void clearListOfValidatedBeacons2() {
+    public boolean clearListOfValidatedBeacons2() {
         BeaconHelper.clearCurrentSequence();
+        return false;
     }
 
     @OnClick(R.id.button_send)
@@ -176,14 +182,22 @@ public class MainFragment extends Fragment implements Validable {
     }
 
     @Override
-    public void onValidationSuccess(int levelOfSecurityBroken) {
-        if (currentLevelOfSecurityBroken < levelOfSecurityBroken) {
-            currentLevelOfSecurityBroken = levelOfSecurityBroken;
-        }
+    public void onValidationSuccess(final int levelOfSecurityBroken) {
+        Log.i(TAG, "validationSucces, level: " + levelOfSecurityBroken);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (currentLevelOfSecurityBroken < levelOfSecurityBroken) {
+                    currentLevelOfSecurityBroken = levelOfSecurityBroken;
+                    setImageColorWithLevel(levelOfSecurityBroken);
+                }
+            }
+        });
+
     }
 
     @Override
     public void onValidationFailed() {
-
+        Log.e(TAG, "failed validation");
     }
 }
