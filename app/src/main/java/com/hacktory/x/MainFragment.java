@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -19,6 +20,9 @@ public class MainFragment extends Fragment {
 
     @Bind(R.id.button_receive)
     public Button buttonReceive;
+
+    private ImageView imageViewFirst, imageViewSecond, imageViewThird,
+            imageViewFourth, imageViewFifth;
 
     @Bind(R.id.button_send)
     public Button buttonSend;
@@ -41,11 +45,24 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        getViews(view);
+
+//        setAllImagesToColor(Constants.COLOR_GREY);
         ButterKnife.bind(this, view);
         return view;
     }
 
+    private void getViews(View view) {
+        
+        imageViewFirst = (ImageView) view.findViewById(R.id.imageView_first);
+        imageViewSecond = (ImageView) view.findViewById(R.id.imageView_second);
+        imageViewThird = (ImageView) view.findViewById(R.id.imageView_third);
+        imageViewFourth = (ImageView) view.findViewById(R.id.imageView_fourth);
+        imageViewFifth = (ImageView) view.findViewById(R.id.imageView_fifth);
+
+    }
 
     @OnClick(R.id.button_receive)
     public void switchToReceive() {
@@ -55,6 +72,52 @@ public class MainFragment extends Fragment {
     @OnClick(R.id.button_send)
     public void switchToSend() {
         ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_SEND);
+    }
+
+    public void setAllImagesToColor(int color){
+        int image = 0;
+        switch (color){
+            case Constants.COLOR_GREY:
+                image = R.drawable.circle_grey;
+                break;
+            case Constants.COLOR_LIGHT_GREEN:
+                image = R.drawable.circle_greenl;
+                break;
+            case Constants.COLOR_DARK_GREEN:
+                image = R.drawable.circle_greend;
+                break;
+        }
+
+        imageViewFirst.setImageResource(image);
+        imageViewSecond.setImageResource(image);
+        imageViewThird.setImageResource(image);
+        imageViewFourth.setImageResource(image);
+        imageViewFifth.setImageResource(image);
+
+    }
+
+    public void setImageColor (int color, ImageView imageView){
+
+        int image = 0;
+        switch (color){
+            case Constants.COLOR_GREY:
+                image = R.drawable.circle_grey;
+                break;
+            case Constants.COLOR_LIGHT_GREEN:
+                image = R.drawable.circle_greenl;
+                break;
+            case Constants.COLOR_DARK_GREEN:
+                image = R.drawable.circle_greend;
+                break;
+        }
+        
+        imageView.setImageResource(image);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        parentactivity = (MainActivity) activity;
     }
 
     @Override
