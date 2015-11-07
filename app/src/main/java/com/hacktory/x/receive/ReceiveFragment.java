@@ -47,10 +47,6 @@ public class ReceiveFragment extends Fragment {
         return fragment;
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public ReceiveFragment() {
     }
 
@@ -72,7 +68,8 @@ public class ReceiveFragment extends Fragment {
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        messageListAdapter.addNewMessage(new Message("TEST", System.currentTimeMillis()));
+        messageListAdapter.addNewMessage(new Message("TEST", System.currentTimeMillis(), false));
+        messageListAdapter.addNewMessage(new Message("ENEMY!", System.currentTimeMillis(),true));
         return view;
     }
 

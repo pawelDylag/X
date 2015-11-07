@@ -23,6 +23,7 @@ import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
 import com.hacktory.x.interfaces.Validable;
 import com.hacktory.x.receive.ReceiveFragment;
+import com.hacktory.x.send.SendFragment;
 import com.tt.whorlviewlibrary.WhorlView;
 
 import java.util.ArrayList;
@@ -89,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements Validable {
                 break;
             case Constants.FRAGMENT_SEND:
                 SELECTED_FRAGMENT = Constants.FRAGMENT_SEND;
+                SendFragment fragmentS = SendFragment.newInstance();
+                FragmentTransaction ftS = getFragmentManager().beginTransaction();
+                ftS.replace(R.id.fragment_placeholder_main, fragmentS);
+                ftS.commit();
                 break;
             default:
 //                fragment = new MainFragment();
