@@ -63,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
         beaconManager.setForegroundScanPeriod(300, 0);
     }
 
-    }
     private void initIntentFilters() {
         Log.d(TAG, "initIntentFilters() called with: " + "");
+    }
 
     @Override
     protected void onDestroy() {
