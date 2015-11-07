@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void showProgressBar(final boolean show) {
         Log.d(TAG, "showProgressBar " + show);
+        if (progressBar == null)
+            return;
         int vis = show ? View.VISIBLE : View.GONE;
         if (show) progressBar.start();
         else progressBar.stop();
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 Collections.sort(list, Constants.getMostNearbyComparator());
                 for (Beacon beacon : list) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
-                            + ",minor:" + beacon.getMinor() + ",major:" + beacon.getMajor());
+                            + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
                 }
             }
         });
