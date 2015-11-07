@@ -20,7 +20,7 @@ public class MainFragment extends Fragment {
 
     @Bind(R.id.button_receive)
     public Button buttonReceive;
-    private Button buttonReceive;
+
     private ImageView imageViewFirst, imageViewSecond, imageViewThird,
             imageViewFourth, imageViewFifth;
 
@@ -48,23 +48,21 @@ public class MainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         getViews(view);
-        setListeners();
 
 //        setAllImagesToColor(Constants.COLOR_GREY);
-        View view =  inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
 
     private void getViews(View view) {
-
-        buttonReceive = (Button) view.findViewById(R.id.button_receive);
-
+        
         imageViewFirst = (ImageView) view.findViewById(R.id.imageView_first);
         imageViewSecond = (ImageView) view.findViewById(R.id.imageView_second);
         imageViewThird = (ImageView) view.findViewById(R.id.imageView_third);
         imageViewFourth = (ImageView) view.findViewById(R.id.imageView_fourth);
         imageViewFifth = (ImageView) view.findViewById(R.id.imageView_fifth);
+
+    }
 
     @OnClick(R.id.button_receive)
     public void switchToReceive() {
@@ -74,14 +72,6 @@ public class MainFragment extends Fragment {
     @OnClick(R.id.button_send)
     public void switchToSend() {
         ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_SEND);
-    private void setListeners() {
-
-        buttonReceive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).setFragment(Constants.FRAGMENT_RECEIVE);
-            }
-        });
     }
 
     public void setAllImagesToColor(int color){
