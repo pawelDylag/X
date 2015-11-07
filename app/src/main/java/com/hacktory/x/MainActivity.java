@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     WifiP2pManager.Channel p2pChannel;
     WifiP2pManager p2pManager;
+
+    private WifiP2pManager.PeerListListener peerListListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initIntentFilters() {
         Log.d(TAG, "initIntentFilters() called with: " + "");
-        
+
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
@@ -101,6 +104,31 @@ public class MainActivity extends AppCompatActivity {
 
         p2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         p2pChannel = p2pManager.initialize(this, getMainLooper(), null);
+
+        p2pManager.discoverPeers(p2pChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "discoverPeers(): onSuccess");
+                initPeerListener();
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Log.d(TAG, "discoverPeers(): onFailure");
+            }
+        });
+    }
+
+    private void initPeerListener() {
+        Log.d(TAG, "initPeerListener() called with: " + "");
+
+        peerListListener = new WifiP2pManager.PeerListListener() {
+            @Override
+            public void onPeersAvailable(WifiP2pDeviceList peerList) {
+                Log.d(TAG, "Peers available: " + peerList.getDeviceList().size());
+
+            }
+        };
     }
 
     private void initBroadcastReceiver() {
@@ -126,13 +154,12 @@ public class MainActivity extends AppCompatActivity {
                     // The peer list has changed!  We should probably do something about
                     // that.
 
-                } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 
-                    // Connection state changed!  We should probably do something about
-                    // that.
+                } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+                    Log.d(TAG, "Wifi_P2P_connection_changed !");
 
                 } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-
+                    Log.d(TAG, "Wifi_P2P_this_device_changed !");
                 }
             }
         };
