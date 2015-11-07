@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         initIntentFilters();
         initP2PChannel();
         initBroadcastReceiver();
-        registerReceiver();
     }
 
     private void setFragment(int selectedFragment){
@@ -138,6 +137,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
+
     public void showProgressBar(final boolean show) {
         Log.d(TAG, "showProgressBar " + show);
         if (progressBar == null)
@@ -154,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 showProgressBar(false);
-                Collections.sort(list, Constants.getMostNearbyComparator());
+               // Collections.sort(list, Constants.getMostNearbyComparator());
                 for (Beacon beacon : list) {
                     Log.d(TAG, "discovered beacon: " + beacon.getRssi()
                             + ", minor:" + beacon.getMinor() + ", major:" + beacon.getMajor());
